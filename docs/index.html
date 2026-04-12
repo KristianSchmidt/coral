@@ -1,4 +1,4990 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Coral Report</title></head>
-<body><p>No report generated yet. Run <code>uv run report.py &lt;CODE&gt;</code> to generate.</p></body>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🇩🇰 Danish Players — The open Jutland championships</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --border: #2a2d3a;
+  --text: #e4e4e7;
+  --text-dim: #9ca3af;
+  --win: #22c55e;
+  --loss: #ef4444;
+  --accent: #3b82f6;
+  --rank: #f59e0b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+header {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+header h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+header .meta {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+header .status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.summary {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+.player-card > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.player-card > summary::-webkit-details-marker { display: none; }
+.player-card > summary::before {
+  content: '▶';
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+}
+.player-card[open] > summary::before { transform: rotate(90deg); }
+.player-name { font-weight: 600; font-size: 1.05rem; }
+.player-record { color: var(--text-dim); font-size: 0.85rem; white-space: nowrap; }
+.competition {
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.comp-header h3 { font-size: 0.95rem; font-weight: 500; color: var(--accent); }
+.comp-meta { font-size: 0.8rem; color: var(--text-dim); display: flex; gap: 0.5rem; align-items: baseline; }
+.rank {
+  background: var(--rank);
+  color: #000;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.comp-record { white-space: nowrap; }
+table.matches {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+table.matches td { padding: 0.25rem 0.4rem; }
+.phase-header td {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  padding-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.round { color: var(--text-dim); width: 5rem; white-space: nowrap; }
+.result { width: 2rem; text-align: center; font-weight: 700; border-radius: 3px; }
+.result.win { color: var(--win); }
+.result.loss { color: var(--loss); }
+.opponent { }
+.score { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
+.dk-flag { font-size: 0.75rem; }
+.forfeit { font-size: 0.7rem; color: var(--text-dim); font-style: italic; }
+.qual-fold {
+  margin: 0.25rem 0;
+}
+.qual-fold > summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  padding: 0.25rem 0;
+  user-select: none;
+}
+.qual-fold > summary:hover {
+  color: var(--text);
+}
+.qual-fold table.matches {
+  margin-top: 0.25rem;
+}
+.active-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.active-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+.active-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.3rem 0;
+}
+a.active-name {
+  font-weight: 600;
+  min-width: 10rem;
+  margin-right: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
+}
+a.active-name:hover {
+  color: var(--accent);
+}
+.active-comp {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.active-comp.playing {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid var(--win);
+  color: var(--win);
+}
+.active-comp.live {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--loss);
+  color: var(--loss);
+  font-weight: 600;
+}
+.active-comp.waiting {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid var(--rank);
+  color: var(--rank);
+}
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+@media (max-width: 600px) {
+  body { padding: 0.5rem; }
+  .comp-header { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🇩🇰 Danish Players</h1>
+  <div class="meta">The open Jutland championships · 2026-03-20 — 2026-03-21</div>
+  <div class="status">🏁 Finished</div>
+</header>
+
+<div class="summary">
+  <span>43 Danish players tracked</span>
+  <span><a href="https://app.tablesoccer.org/p/69N3D6" target="_blank">View on Coral ↗</a></span>
+</div>
+
+
+<div class="active-section">
+  <h2>🟢 Still Participating (10)</h2>
+  <div class="active-row"><a class="active-name" href="#player-279336456">Sofie Solsø Odgaard</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-346282575">Kristian Schmidt</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-424918288">Jesper Rosengaard</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-532332117">András Bence Tóvölgyi</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-622583590">Marc Krogen</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-759459450">Marco Frøkjær Wejse</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-1248174684">Asker Hardenberg</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-1540381936">David Ahrenkiel</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-1560056126">Emil Savery</a><span class="active-comp waiting">⏳ DYP</span></div>
+<div class="active-row"><a class="active-name" href="#player-1579783884">Jakob Kampmann</a><span class="active-comp waiting">⏳ DYP</span></div>
+
+</div>
+
+
+
+<details class="player-card" id="player-1506186036" open>
+  <summary>
+    <span class="player-name">Hannibal Keblovszki</span>
+    <span class="player-record">13W – 2L · 33–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">1st</span> <span class="comp-record">7W–0L · 18–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 4-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-4 5-3 5-3</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">1st</span> <span class="comp-record">6W–2L · 15–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-1 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-2 1-5 4-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-4 3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-4</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1659409469" open>
+  <summary>
+    <span class="player-name">Kevin Lee Manaa</span>
+    <span class="player-record">13W – 5L · 38–19 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">6W–1L · 17–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 6-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofus Bellens Pedersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 1-5 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-4 4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-1 3-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5 5-3 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5 5-2 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">4th</span> <span class="comp-record">7W–4L · 21–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 2-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-0 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4 5-4</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 3-5 4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1560056126" open>
+  <summary>
+    <span class="player-name">Emil Savery</span>
+    <span class="player-record">12W – 5L · 35–20 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">7th</span> <span class="comp-record">4W–2L · 10–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 0-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 5-3 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-4</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">8W–3L · 25–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 0-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 2-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 2-5 5-2 5-1</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 3-5 4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-4 2-5 8-6</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-721400133" open>
+  <summary>
+    <span class="player-name">Morten Mandrup Hansen</span>
+    <span class="player-record">12W – 6L · 36–22 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">6W–1L · 16–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-1 5-0</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 4-5 3-5 5-3 6-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5 5-3 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-4 5-3 5-3</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">4W–5L · 14–12 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 1-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-4 3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Frederik Træholt Andersen)</h3>
+    <div class="comp-meta"><span class="rank">1st</span> <span class="comp-record">2W–0L · 6–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nichlas Overballe / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Troels Grosbøll-Poulsen / Alexander Bjerre <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 5-1 2-5 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1248174684" open>
+  <summary>
+    <span class="player-name">Asker Hardenberg</span>
+    <span class="player-record">10W – 6L · 32–21 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">15th</span> <span class="comp-record">2W–3L · 7–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-4 4-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">8W–3L · 25–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 0-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 2-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 2-5 5-2 5-1</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 3-5 4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-4 2-5 8-6</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-346282575" open>
+  <summary>
+    <span class="player-name">Kristian Schmidt</span>
+    <span class="player-record">10W – 5L · 30–16 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">8th</span> <span class="comp-record">4W–2L · 11–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 2-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 4-5 5-2 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">6W–3L · 19–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-0 5-2 5-2</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-4 2-5 8-6</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2086293841" open>
+  <summary>
+    <span class="player-name">Lasse Møller</span>
+    <span class="player-record">10W – 5L · 27–21 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">4th</span> <span class="comp-record">5W–2L · 13–10 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofus Bellens Pedersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 1-5 5-2 5-3 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 4-5 5-2 4-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5 5-2 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">5W–3L · 14–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 4-6</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-4</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5 5-4 4-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 5-1 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1164895379" open>
+  <summary>
+    <span class="player-name">Sofus Bellens Pedersen</span>
+    <span class="player-record">10W – 4L · 30–14 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">13th</span> <span class="comp-record">3W–2L · 10–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 1-5 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 1-5 5-2 5-3 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">1st</span> <span class="comp-record">7W–2L · 20–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-2 1-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-0 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 2-5 5-2 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1579783884" open>
+  <summary>
+    <span class="player-name">Jakob Kampmann</span>
+    <span class="player-record">9W – 6L · 28–20 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">4W–2L · 13–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jørgen Heinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 2-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 4-5 3-5 5-3 6-4</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">5W–4L · 15–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 4-6</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 3-5 2-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-0 4-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 5-1 2-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-622583590" open>
+  <summary>
+    <span class="player-name">Marc Krogen</span>
+    <span class="player-record">9W – 6L · 27–21 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">4W–2L · 12–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 6-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 5-4 4-5 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-1 3-5 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">5W–4L · 15–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 4-6</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 3-5 2-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-0 4-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 5-1 2-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1540381936" open>
+  <summary>
+    <span class="player-name">David Ahrenkiel</span>
+    <span class="player-record">8W – 7L · 25–18 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">19th</span> <span class="comp-record">1W–3L · 4–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5 5-1 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">4th</span> <span class="comp-record">7W–4L · 21–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 2-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-0 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4 5-4</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 3-5 4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1480430537" open>
+  <summary>
+    <span class="player-name">Malene Veje</span>
+    <span class="player-record">8W – 5L · 21–13 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">9th</span> <span class="comp-record">3W–2L · 8–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jørgen Heinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-1</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 5-3 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">4th</span> <span class="comp-record">5W–3L · 13–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-0 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 0-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5 5-4 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-759459450" open>
+  <summary>
+    <span class="player-name">Marco Frøkjær Wejse</span>
+    <span class="player-record">8W – 5L · 23–17 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">10th</span> <span class="comp-record">3W–2L · 10–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 4-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 5-4 4-5 5-2</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">5W–3L · 13–10 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 4-5 4-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-424918288" open>
+  <summary>
+    <span class="player-name">Jesper Rosengaard</span>
+    <span class="player-record">7W – 2L · 20–9 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">1st</span> <span class="comp-record">7W–2L · 20–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-2 1-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-0 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 2-5 5-2 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1741902398" open>
+  <summary>
+    <span class="player-name">Karl-Emil Bruhn Poulsen</span>
+    <span class="player-record">7W – 5L · 18–17 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">11th</span> <span class="comp-record">3W–2L · 8–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 4-5 5-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">4W–3L · 10–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2 5-2</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-0 4-5 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1115943214" open>
+  <summary>
+    <span class="player-name">Nikolaj Benzon</span>
+    <span class="player-record">7W – 5L · 18–14 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">2W–2L · 5–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pelle Kirchner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">4th</span> <span class="comp-record">5W–3L · 13–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-0 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 0-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5 5-4 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1543982052" open>
+  <summary>
+    <span class="player-name">Troels Grosbøll-Poulsen</span>
+    <span class="player-record">7W – 9L · 26–27 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">16th</span> <span class="comp-record">2W–3L · 6–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-2 0-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3 4-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 5-1 5-4</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">16th</span> <span class="comp-record">3W–5L · 12–13 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 2-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 0-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 3-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-1 3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Alexander Bjerre)</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">2W–1L · 8–5 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 3-5 5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen / Frederik Træholt Andersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 5-1 2-5 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-614240798" open>
+  <summary>
+    <span class="player-name">Malte Thyrring</span>
+    <span class="player-record">6W – 6L · 16–17 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">16th</span> <span class="comp-record">1W–3L · 3–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 2-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3 4-5 5-1</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">5W–3L · 13–10 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 4-5 4-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1528332321" open>
+  <summary>
+    <span class="player-name">Martin Due</span>
+    <span class="player-record">6W – 2L · 15–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">1st</span> <span class="comp-record">6W–2L · 15–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-1 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-2 1-5 4-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-4 3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 5-4</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-512186028" open>
+  <summary>
+    <span class="player-name">Rune Lillevang</span>
+    <span class="player-record">6W – 3L · 19–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">6W–3L · 19–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-0 5-2 5-2</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-4 2-5 8-6</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1332860570" open>
+  <summary>
+    <span class="player-name">Jean Hickel</span>
+    <span class="player-record">5W – 3L · 14–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">5W–3L · 14–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 4-6</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 2-5 5-4 5-4</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5 5-4 4-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 5-1 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-116535655" open>
+  <summary>
+    <span class="player-name">Peter Fjordside Rasmussen</span>
+    <span class="player-record">5W – 8L · 16–22 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">14th</span> <span class="comp-record">2W–3L · 6–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jørgen Heinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 4-5 5-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5 5-1 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-1 5-0</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">15th</span> <span class="comp-record">3W–5L · 10–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 2-5 5-3 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-1 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 3-5 2-5 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-532332117" open>
+  <summary>
+    <span class="player-name">András Bence Tóvölgyi</span>
+    <span class="player-record">4W – 7L · 11–19 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">25th</span> <span class="comp-record">1W–3L · 2–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-4 6-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 0-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">10th</span> <span class="comp-record">3W–4L · 9–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-1 3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1675484093" open>
+  <summary>
+    <span class="player-name">Frederik Træholt Andersen</span>
+    <span class="player-record">4W – 4L · 11–14 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">2W–4L · 5–12 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 2-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-0 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-4 5-2</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Morten Mandrup Hansen)</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">2W–0L · 6–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nichlas Overballe / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Troels Grosbøll-Poulsen / Alexander Bjerre <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 5-1 2-5 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-279336456" open>
+  <summary>
+    <span class="player-name">Sofie Solsø Odgaard</span>
+    <span class="player-record">4W – 9L · 14–22 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">23rd</span> <span class="comp-record">0W–3L · 0–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pelle Kirchner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">4W–5L · 14–12 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 6-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 1-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-4 3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Rene Petræus)</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">0W–1L · 0–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Troels Grosbøll-Poulsen / Alexander Bjerre <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-215205555" open>
+  <summary>
+    <span class="player-name">Tage Miller</span>
+    <span class="player-record">4W – 3L · 10–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">4W–3L · 10–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2 5-2</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-0 4-5 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1080379575" open>
+  <summary>
+    <span class="player-name">Alexander Bjerre</span>
+    <span class="player-record">3W – 6L · 12–18 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">15th</span> <span class="comp-record">1W–5L · 4–13 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-0 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 3-5 1-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Troels Grosbøll-Poulsen)</h3>
+    <div class="comp-meta"><span class="rank">4th</span> <span class="comp-record">2W–1L · 8–5 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 3-5 5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen / Frederik Træholt Andersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-2 5-1 2-5 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-858812793" open>
+  <summary>
+    <span class="player-name">Anja Linneberg</span>
+    <span class="player-record">3W – 9L · 12–22 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">26th</span> <span class="comp-record">0W–4L · 0–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jørgen Heinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2 5-3</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">16th</span> <span class="comp-record">3W–5L · 12–13 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 2-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 0-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 3-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller / Jean Hickel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-1 3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-171345332" open>
+  <summary>
+    <span class="player-name">August Soja Broz</span>
+    <span class="player-record">3W – 4L · 9–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">10th</span> <span class="comp-record">3W–4L · 9–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-1 3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-838422227" open>
+  <summary>
+    <span class="player-name">Patrick Tyme</span>
+    <span class="player-record">3W – 5L · 10–14 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">15th</span> <span class="comp-record">3W–5L · 10–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 2-5 5-3 2-5</td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Martin Due / Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-1 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-4 3-5 2-5 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1817649151" open>
+  <summary>
+    <span class="player-name">Sebastian Haaland</span>
+    <span class="player-record">3W – 8L · 10–20 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">20th</span> <span class="comp-record">1W–3L · 3–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3 5-3</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles (with Michael Billing)</h3>
+    <div class="comp-meta"><span class="rank">11th</span> <span class="comp-record">2W–4L · 5–10 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 4-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Michael Billing)</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">0W–1L · 2–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Troels Grosbøll-Poulsen / Alexander Bjerre <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 3-5 5-2 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1244391621" open>
+  <summary>
+    <span class="player-name">Frederik Braüner</span>
+    <span class="player-record">2W – 6L · 5–17 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">19th</span> <span class="comp-record">1W–5L · 2–12 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 0-5 1-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Nichlas Overballe)</h3>
+    <div class="comp-meta"><span class="rank">8th</span> <span class="comp-record">1W–1L · 3–5 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Bjerge / Manola Crassini <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-0 0-5 0-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen / Frederik Træholt Andersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2002130705" open>
+  <summary>
+    <span class="player-name">Michael Billing</span>
+    <span class="player-record">2W – 5L · 7–13 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles (with Sebastian Haaland)</h3>
+    <div class="comp-meta"><span class="rank">11th</span> <span class="comp-record">2W–4L · 5–10 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malte Thyrring / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-3 4-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 4-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Sebastian Haaland)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 2–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Troels Grosbøll-Poulsen / Alexander Bjerre <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 5-4 3-5 5-2 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-164497996" open>
+  <summary>
+    <span class="player-name">Nichlas Overballe</span>
+    <span class="player-record">2W – 9L · 8–25 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">22nd</span> <span class="comp-record">0W–3L · 1–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pelle Kirchner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-2 0-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">15th</span> <span class="comp-record">1W–5L · 4–13 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">August Soja Broz / András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tamara Abdel-Aziz / Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frederik Træholt Andersen / Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-0 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 3-5 3-5 1-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Frederik Braüner)</h3>
+    <div class="comp-meta"><span class="rank">7th</span> <span class="comp-record">1W–1L · 3–5 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nikolaj Bjerge / Manola Crassini <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-0 0-5 0-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Morten Mandrup Hansen / Frederik Træholt Andersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1996906248" open>
+  <summary>
+    <span class="player-name">Nikolaj Bjerge</span>
+    <span class="player-record">2W – 8L · 7–22 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">18th</span> <span class="comp-record">0W–3L · 0–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pelle Kirchner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-3 5-2</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">2W–4L · 5–12 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 2-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofus Bellens Pedersen / Jesper Rosengaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-0 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery / Asker Hardenberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 3-5 5-3 5-3</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-4 5-2</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Manola Crassini)</h3>
+    <div class="comp-meta"><span class="rank">9th</span> <span class="comp-record">0W–1L · 2–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nichlas Overballe / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-0 0-5 0-5 7-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1590357200" open>
+  <summary>
+    <span class="player-name">Tamara Abdel-Aziz</span>
+    <span class="player-record">2W – 8L · 7–20 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">21st</span> <span class="comp-record">1W–3L · 2–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emil Savery <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 2-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">17th</span> <span class="comp-record">1W–5L · 5–13 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 2-5 5-3 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-754939466" open>
+  <summary>
+    <span class="player-name">Ditte Marie Larsen</span>
+    <span class="player-record">1W – 5L · 5–13 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">17th</span> <span class="comp-record">1W–5L · 5–13 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann / Marc Krogen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexander Bjerre / Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 5-3 2-5 5-3 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1937376069" open>
+  <summary>
+    <span class="player-name">Jørgen Heinsen</span>
+    <span class="player-record">1W – 3L · 2–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">24th</span> <span class="comp-record">1W–3L · 2–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anja Linneberg <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-1</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-886667185" open>
+  <summary>
+    <span class="player-name">Rene Petræus</span>
+    <span class="player-record">1W – 10L · 3–24 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">27th</span> <span class="comp-record">0W–4L · 1–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-4 6-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">19th</span> <span class="comp-record">1W–5L · 2–12 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hjalte Gotved Hvid / Magna Mose Mailund <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kristian Schmidt / Rune Lillevang <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Billing / Sebastian Haaland <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 0-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">2-5 2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 0-5 1-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Sofie Solsø Odgaard)</h3>
+    <div class="comp-meta"><span class="rank">11th</span> <span class="comp-record">0W–1L · 0–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Troels Grosbøll-Poulsen / Alexander Bjerre <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1372588779" open>
+  <summary>
+    <span class="player-name">Hjalte Gotved Hvid</span>
+    <span class="player-record">0W – 6L · 0–14 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">20th</span> <span class="comp-record">0W–6L · 0–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-1 5-1</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 1-5 0-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1867270530" open>
+  <summary>
+    <span class="player-name">Magna Mose Mailund</span>
+    <span class="player-record">0W – 6L · 0–14 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Doubles</h3>
+    <div class="comp-meta"><span class="rank">20th</span> <span class="comp-record">0W–6L · 0–14 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Rene Petræus / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anja Linneberg / Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Peter Fjordside Rasmussen / Patrick Tyme <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Winners bracket</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">David Ahrenkiel / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-1 5-1</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Losers bracket</td></tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Last 16</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard / Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 1-5 0-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-931725437" open>
+  <summary>
+    <span class="player-name">Manola Crassini</span>
+    <span class="player-record">0W – 1L · 2–3 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>DYP (with Nikolaj Bjerge)</h3>
+    <div class="comp-meta"><span class="rank">10th</span> <span class="comp-record">0W–1L · 2–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">DYP</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nichlas Overballe / Frederik Braüner <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-0 0-5 0-5 7-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1058732442" open>
+  <summary>
+    <span class="player-name">Pelle Kirchner</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Singles</h3>
+    <div class="comp-meta"><span class="rank">28th</span> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (3 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nikolaj Bjerge <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nichlas Overballe <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 2-5 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Knockout rounds</td></tr>
+<tr>
+  <td class="round">Last 32</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nikolaj Benzon <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<footer>
+  Data from <a href="https://app.tablesoccer.org/p/69N3D6">app.tablesoccer.org</a>
+</footer>
+
+</body>
 </html>
