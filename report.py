@@ -162,23 +162,28 @@ def team_has_danish(data: dict, team_id) -> bool:
     return False
 
 
-def fmt_score(match: dict) -> str:
-    score = match.get("score")
+def _score_lists(score: dict | None) -> tuple[list, list]:
+    """Normalise score to two lists (handles single-int 'first to N' format)."""
     if not score:
-        return ""
-    home = score.get("home") or []
-    away = score.get("away") or []
+        return [], []
+    home = score.get("home")
+    away = score.get("away")
+    if isinstance(home, list) and isinstance(away, list):
+        return home, away
+    if isinstance(home, (int, float)) and isinstance(away, (int, float)):
+        return [home], [away]
+    return [], []
+
+
+def fmt_score(match: dict) -> str:
+    home, away = _score_lists(match.get("score"))
     if not home:
         return ""
     return " ".join(f"{h}-{a}" for h, a in zip(home, away))
 
 
 def sets_won_lost(match: dict, is_home: bool) -> tuple[int, int]:
-    score = match.get("score")
-    if not score:
-        return 0, 0
-    home = score.get("home") or []
-    away = score.get("away") or []
+    home, away = _score_lists(match.get("score"))
     w = l = 0
     for h, a in zip(home, away):
         if is_home:
@@ -191,11 +196,7 @@ def sets_won_lost(match: dict, is_home: bool) -> tuple[int, int]:
 
 
 def points_won_lost(match: dict, is_home: bool) -> tuple[int, int]:
-    score = match.get("score")
-    if not score:
-        return 0, 0
-    home = score.get("home") or []
-    away = score.get("away") or []
+    home, away = _score_lists(match.get("score"))
     pw = sum(home if is_home else away)
     pl = sum(away if is_home else home)
     return pw, pl
