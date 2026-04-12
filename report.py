@@ -231,23 +231,6 @@ def infer_competitions(data: dict) -> dict[int, int]:
         if c["status"] != "removed"
     }
 
-    # 2. Phase-name matching: if phase name is a substring of (or equals) a
-    #    competition name, use that competition.
-    for pid_str, phase in data["phases"].items():
-        if phase["id"] in phase_to_comp:
-            continue
-        pname = (phase.get("name") or "").strip().lower()
-        if not pname:
-            continue
-        for cid, comp in active_comps.items():
-            cname = (comp.get("name") or "").strip().lower()
-            if pname == cname or pname in cname or cname in pname:
-                phase_to_comp[phase["id"]] = cid
-                break
-
-    if len(phase_to_comp) == len(data["phases"]):
-        return phase_to_comp
-
     # Build team_id -> set of non-removed competition_ids
     team_to_comps: dict[int, Counter] = defaultdict(Counter)
     for cp in data["competition_players"]:
@@ -261,7 +244,7 @@ def infer_competitions(data: dict) -> dict[int, int]:
     for pt in data["phase_teams"]:
         phase_team_ids[pt["phase_id"]].add(pt["team_id"])
 
-    # 3. Majority vote across teams in the phase
+    # 2. Majority vote across teams in the phase
     for pid_str, phase in data["phases"].items():
         if phase["id"] in phase_to_comp:
             continue
@@ -278,6 +261,22 @@ def infer_competitions(data: dict) -> dict[int, int]:
                     votes[cid] += cnt
         if votes:
             phase_to_comp[phase["id"]] = votes.most_common(1)[0][0]
+
+    # 3. Adjacency: phases are ordered by ID in groups of
+    #    (Qualifications -> Main Round -> Secondary Round) per competition.
+    #    If a phase is still unmapped (e.g. "Qualifications" matching the
+    #    wrong competition by name), inherit the competition from the nearest
+    #    mapped phase with a higher ID (the Main Round that follows).
+    sorted_phases = sorted(data["phases"].values(), key=lambda p: p["id"])
+    for i, phase in enumerate(sorted_phases):
+        if phase["id"] in phase_to_comp:
+            continue
+        # Look forward for the nearest mapped phase
+        for j in range(i + 1, len(sorted_phases)):
+            nxt = sorted_phases[j]
+            if nxt["id"] in phase_to_comp:
+                phase_to_comp[phase["id"]] = phase_to_comp[nxt["id"]]
+                break
 
     return phase_to_comp
 
