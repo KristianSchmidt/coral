@@ -403,14 +403,13 @@ def build_report(data: dict) -> str:
         total_w = total_l = total_sw = total_sl = 0
 
         for comp_name, matches in comp_matches.items():
-            # Determine partner (for doubles)
+            # Determine partner (for doubles / DYP)
             sample = matches[0]
             sample_tid = sample["home"] if sample["home"] in my_team_ids else sample["away"]
-            team = data["teams"].get(str(sample_tid))
             partner = None
-            if team:
-                lineup = team.get("lineup") or []
-                partners = [data["players"].get(str(p)) for p in lineup if p != pid]
+            partner_pids = [p for p in team_player_ids(data, sample_tid) if p != pid]
+            if partner_pids:
+                partners = [data["players"].get(str(p)) for p in partner_pids]
                 partners = [p for p in partners if p]
                 if partners:
                     partner = " / ".join(f"{p['first_name']} {p['last_name']}" for p in partners)
