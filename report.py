@@ -6,6 +6,7 @@ import json
 import os
 import sys
 from collections import Counter, defaultdict
+from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 
@@ -731,6 +732,18 @@ def render_html(tournament: dict, player_sections: list[dict], active_players: l
     players_html = "\n".join(player_html_parts)
     n_players = len(player_sections)
 
+    # Build player jump dropdown options (sorted alphabetically by surname)
+    sorted_by_surname = sorted(
+        player_sections,
+        key=lambda p: p["name"].split()[-1].lower() + " " + p["name"].split()[0].lower(),
+    )
+    player_options = "\n    ".join(
+        f'<option value="#player-{ps["player_id"]}">{escape(ps["name"].split()[-1] + ", " + " ".join(ps["name"].split()[:-1]))}</option>'
+        for ps in sorted_by_surname
+    )
+
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
     # Build active players summary
     active_html = ""
     if active_players:
@@ -968,6 +981,30 @@ footer {{
   font-size: 0.75rem;
 }}
 footer a {{ color: var(--accent); text-decoration: none; }}
+.player-jump {{
+  text-align: center;
+  margin-bottom: 1.5rem;
+}}
+.player-jump select {{
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+}}
+.player-jump select:focus {{
+  outline: none;
+  border-color: var(--accent);
+}}
+.generated {{
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}}
 @media (max-width: 600px) {{
   body {{ padding: 0.5rem; }}
   .comp-header {{ flex-direction: column; }}
@@ -980,11 +1017,19 @@ footer a {{ color: var(--accent); text-decoration: none; }}
   <h1>🇩🇰 Danish Players</h1>
   <div class="meta">{name} · {start} — {end}</div>
   <div class="status">{status_badge}</div>
+  <div class="generated">Report generated at {generated_at}</div>
 </header>
 
 <div class="summary">
   <span>{n_players} Danish players tracked</span>
   <span><a href="https://app.tablesoccer.org/p/{code}" target="_blank">View on Coral ↗</a></span>
+</div>
+
+<div class="player-jump">
+  <select onchange="if(this.value)location.hash=this.value;this.selectedIndex=0;">
+    <option value="">Jump to player…</option>
+    {player_options}
+  </select>
 </div>
 
 {active_html}
