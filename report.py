@@ -6,7 +6,8 @@ import json
 import os
 import sys
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from html import escape
 from pathlib import Path
 
@@ -165,7 +166,7 @@ def team_has_danish(data: dict, team_id) -> bool:
 
 def _score_lists(score: dict | None) -> tuple[list, list]:
     """Normalise score to two lists (handles single-int 'first to N' format)."""
-    if not score:
+    if not score or not isinstance(score, dict):
         return [], []
     home = score.get("home")
     away = score.get("away")
@@ -442,7 +443,8 @@ def build_report(data: dict) -> str:
 
             prev_phase = None
             for m in matches:
-                is_forfeit = m.get("score", {}).get("forfeit")
+                score_val = m.get("score", {})
+                is_forfeit = score_val.get("forfeit") if isinstance(score_val, dict) else False
                 is_home = m["home"] in my_team_ids
                 won = (m.get("winner") == 1 and is_home) or (m.get("winner") == 2 and not is_home)
                 opp_id = m["away"] if is_home else m["home"]
@@ -742,7 +744,7 @@ def render_html(tournament: dict, player_sections: list[dict], active_players: l
         for ps in sorted_by_surname
     )
 
-    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    generated_at = datetime.now(ZoneInfo("Europe/Copenhagen")).strftime("%Y-%m-%d %H:%M %Z")
 
     # Build active players summary
     active_html = ""
