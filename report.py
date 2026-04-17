@@ -446,7 +446,9 @@ def build_report(data: dict) -> str:
                 score_val = m.get("score", {})
                 is_forfeit = score_val.get("forfeit") if isinstance(score_val, dict) else False
                 is_home = m["home"] in my_team_ids
-                won = (m.get("winner") == 1 and is_home) or (m.get("winner") == 2 and not is_home)
+                winner = m.get("winner")
+                finished = winner in (1, 2)
+                won = finished and ((winner == 1 and is_home) or (winner == 2 and not is_home))
                 opp_id = m["away"] if is_home else m["home"]
                 opponent = resolve_name(data, opp_id)
                 opp_is_danish = team_has_danish(data, opp_id)
@@ -481,7 +483,7 @@ def build_report(data: dict) -> str:
                 else:
                     rnd_label = "R0"
 
-                if not is_forfeit:
+                if not is_forfeit and finished:
                     sw, sl = sets_won_lost(m, is_home)
                     csw += sw
                     csl += sl
@@ -490,8 +492,15 @@ def build_report(data: dict) -> str:
                     else:
                         cl += 1
 
-                status_class = "win" if won else "loss"
-                status_text = "W" if won else "L"
+                if not finished:
+                    status_class = "pending"
+                    status_text = "…"
+                elif won:
+                    status_class = "win"
+                    status_text = "W"
+                else:
+                    status_class = "loss"
+                    status_text = "L"
 
                 match_rows.append(("match", {
                     "round": rnd_label,
@@ -906,6 +915,7 @@ table.matches td {{ padding: 0.25rem 0.4rem; }}
 .result {{ width: 2rem; text-align: center; font-weight: 700; border-radius: 3px; }}
 .result.win {{ color: var(--win); }}
 .result.loss {{ color: var(--loss); }}
+.result.pending {{ color: var(--text-dim); }}
 .opponent {{ }}
 .score {{ text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }}
 .dk-flag {{ font-size: 0.75rem; }}
