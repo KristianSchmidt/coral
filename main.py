@@ -37,6 +37,51 @@ def get_profile(page: Page) -> dict:
     }""")
 
 
+def search_tournaments(page: Page, query: str) -> list[dict]:
+    """Search for tournaments by name. Opens the app's search dialog and reads results."""
+    # Dismiss any open dialogs first
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(300)
+    page.locator('[data-cy="search-btn"]').first.click()
+    page.wait_for_timeout(500)
+
+    search_input = page.locator('input[placeholder="search..."]')
+    search_input.fill(query)
+    page.wait_for_timeout(2000)
+
+    results = page.evaluate("""() => {
+        const app = document.querySelector('#q-app').__vue__;
+        function find(root, name, depth) {
+            if (depth > 10) return null;
+            for (const child of (root.$children || [])) {
+                if ((child.$options?.name || '') === name) return child;
+                const f = find(child, name, depth + 1);
+                if (f) return f;
+            }
+            return null;
+        }
+        const sc = find(app, 'SearchSwitcher', 0);
+        return sc ? sc.searchResults : [];
+    }""")
+
+    # Close the dialog
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(300)
+
+    return results
+
+
+def print_search_results(results: list[dict]) -> None:
+    if not results:
+        print("No tournaments found.")
+        return
+    print(f"{'Code':<8} {'Status':<10} {'Date':<12} {'Name':<45} {'Location'}")
+    print("─" * 100)
+    for t in results:
+        loc = f"{t.get('locality', '')}, {t.get('country', '')}" if t.get('locality') else t.get('country', '')
+        print(f"{t['code']:<8} {t.get('status', ''):<10} {t.get('start_on', ''):<12} {t['name']:<45} {loc}")
+
+
 def get_tournament(page: Page, code: str) -> dict:
     """Navigate to a tournament and return its full state."""
     page.evaluate(
@@ -229,6 +274,11 @@ def main() -> None:
                 code = sys.argv[2]
                 interval = int(sys.argv[3]) if len(sys.argv) > 3 else 30
                 watch_tournament(page, code, interval)
+            elif sys.argv[1] == "search" and len(sys.argv) > 2:
+                query = " ".join(sys.argv[2:])
+                results = search_tournaments(page, query)
+                print(f"=== Search: {query} ===")
+                print_search_results(results)
             elif sys.argv[1] == "dump" and len(sys.argv) > 2:
                 code = sys.argv[2]
                 data = get_tournament(page, code)
@@ -237,6 +287,7 @@ def main() -> None:
                 print("Usage:")
                 print("  main.py                         Show profile")
                 print("  main.py profile                 Show profile")
+                print("  main.py search <QUERY>          Search for tournaments")
                 print("  main.py tournament <CODE>       Show tournament summary")
                 print("  main.py watch <CODE> [SEC]      Watch live tournament")
                 print("  main.py dump <CODE>             Dump full tournament JSON")

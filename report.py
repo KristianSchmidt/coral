@@ -177,11 +177,13 @@ def _score_lists(score: dict | None) -> tuple[list, list]:
     return [], []
 
 
-def fmt_score(match: dict) -> str:
+def fmt_score(match: dict, is_home: bool = True) -> str:
     home, away = _score_lists(match.get("score"))
     if not home:
         return ""
-    return " ".join(f"{h}-{a}" for h, a in zip(home, away))
+    if is_home:
+        return " ".join(f"{h}-{a}" for h, a in zip(home, away))
+    return " ".join(f"{a}-{h}" for h, a in zip(home, away))
 
 
 def sets_won_lost(match: dict, is_home: bool) -> tuple[int, int]:
@@ -310,15 +312,39 @@ def round_label(n_matches: int) -> str:
     return f"Last {n_matches * 2}"
 
 
+def round_label_relative(rnd: int, max_round: int) -> str:
+    """Label a knockout round by its distance from the final."""
+    diff = max_round - rnd
+    if diff == 0:
+        return "Final"
+    if diff == 1:
+        return "Semifinal"
+    if diff == 2:
+        return "Quarterfinal"
+    return f"Round {rnd}"
+
+
 def build_report(data: dict) -> str:
     """Build the full HTML report for Danish players."""
     tournament = data["tournament"]
+
+    # If the tournament hasn't started (no matches yet), render the
+    # pre-tournament registration view instead.
+    if not data.get("matches"):
+        return render_registrations_html(data)
+
     phase_to_comp = infer_competitions(data)
 
     # Precompute match counts per (phase_id, round) for round labelling
     round_match_counts: dict[tuple[int, int], int] = defaultdict(int)
     for m in data["matches"]:
         round_match_counts[(m["phase_id"], m.get("round", 0))] += 1
+
+    # Precompute max positive round per phase for relative round labelling
+    phase_max_round: dict[int, int] = {}
+    for (pid, rnd), _ in round_match_counts.items():
+        if rnd > 0:
+            phase_max_round[pid] = max(phase_max_round.get(pid, 0), rnd)
 
     # Find all Danish player IDs (skip anonymous/removed)
     danish_pids = set()
@@ -437,7 +463,7 @@ def build_report(data: dict) -> str:
                 p = data["phases"].get(str(m["phase_id"]), {})
                 phase_names_in_comp.add(p.get("name", ""))
             has_knockout = any(
-                n.lower() not in ("qualifications", "qualification")
+                n.lower() not in ("qualifications", "qualification", "kvalifikation")
                 for n in phase_names_in_comp
             )
 
@@ -452,11 +478,11 @@ def build_report(data: dict) -> str:
                 opp_id = m["away"] if is_home else m["home"]
                 opponent = resolve_name(data, opp_id)
                 opp_is_danish = team_has_danish(data, opp_id)
-                score = fmt_score(m)
+                score = fmt_score(m, is_home)
 
                 phase = data["phases"].get(str(m["phase_id"]), {})
                 phase_name = phase.get("name", "")
-                is_qual = phase_name.lower() in ("qualifications", "qualification")
+                is_qual = phase_name.lower() in ("qualifications", "qualification", "kvalifikation")
 
                 rnd = m.get("round", 0)
                 bracket = "losers" if rnd < 0 else "winners"
@@ -476,9 +502,12 @@ def build_report(data: dict) -> str:
                               if (m["phase_id"], r) in round_match_counts}
                 is_group_stage = len(pos_counts) <= 1
 
-                if is_group_stage and rnd > 0:
+                if (is_group_stage or is_qual) and rnd > 0:
                     rnd_label = f"R{rnd}"
-                elif rnd != 0:
+                elif rnd > 0:
+                    max_rnd = phase_max_round.get(m["phase_id"], rnd)
+                    rnd_label = round_label_relative(rnd, max_rnd)
+                elif rnd < 0:
                     rnd_label = round_label(n_matches)
                 else:
                     rnd_label = "R0"
@@ -598,6 +627,16 @@ def build_active_summary(
             if cstatus == "finished":
                 continue
 
+            # Only consider competitions that have actually started
+            # (have at least one non-scheduled match)
+            comp_has_started = any(
+                m["status"] not in ("scheduled", "ready", "pending")
+                for m in data["matches"]
+                if phase_to_comp.get(m["phase_id"]) == comp_id
+            )
+            if not comp_has_started:
+                continue
+
             # Check if player has a pending (not finished) match in this comp
             has_pending = False
             live_match = None
@@ -631,23 +670,238 @@ def build_active_summary(
                 active_comps.append({"name": comp_name, "status": "playing"})
             elif last_match:
                 # Competition still running but no pending matches — check if
-                # their last match was a loss (eliminated in knockout)
+                # their last match was a loss in a knockout phase (eliminated).
+                # In group/qualification phases a loss doesn't eliminate you.
                 is_home = last_match["home"] in my_tids
                 won = (last_match.get("winner") == 1 and is_home) or (
                     last_match.get("winner") == 2 and not is_home
                 )
-                if won:
-                    # Won last match, awaiting next round
+                last_phase = data["phases"].get(str(last_match["phase_id"]), {})
+                last_phase_name = (last_phase.get("name") or "").lower()
+                is_qual = any(q in last_phase_name for q in ("kvalifikation", "qualification", "qualifications"))
+                if won or is_qual:
+                    # Won last match or still in a group/qual phase — awaiting next round
                     active_comps.append({"name": comp_name, "status": "waiting"})
-                # else: eliminated — don't include
+                # else: lost in knockout — eliminated
             else:
-                # Comp in progress but no matches at all yet
-                active_comps.append({"name": comp_name, "status": "waiting"})
+                # No matches at all — only show if the player is drawn into
+                # a phase that hasn't finished yet (i.e. still waiting for
+                # their first match to be generated).
+                in_active_phase = any(
+                    pt["team_id"] in my_tids
+                    and data["phases"].get(str(pt["phase_id"]), {}).get("status") != "finished"
+                    for pt in data["phase_teams"]
+                    if phase_to_comp.get(pt["phase_id"]) == comp_id
+                )
+                if in_active_phase:
+                    active_comps.append({"name": comp_name, "status": "waiting"})
 
         if active_comps:
             active_players.append({"name": pname, "player_id": pid, "comps": active_comps})
 
     return active_players
+
+
+def render_registrations_html(data: dict) -> str:
+    """Render a pre-tournament view listing Danish registrations per competition."""
+    tournament = data["tournament"]
+
+    # Find Danish player IDs
+    danish_pids = {
+        int(pid) for pid, p in data["players"].items()
+        if is_danish(p) and p.get("first_name") != "Anonymous"
+    }
+
+    # Group ALL registrations by (competition_id, team_id). A None team_id
+    # means a solo entry (one per registration). The lineups for doubles
+    # teams live only in competition_players, not in data["teams"].
+    comp_team_pids: dict[int, dict] = defaultdict(lambda: {"teams": defaultdict(list), "solo": []})
+    for cp in data["competition_players"]:
+        if cp.get("status") == "removed":
+            continue
+        pid = cp.get("player_id")
+        tid = cp.get("team_id")
+        bucket = comp_team_pids[cp["competition_id"]]
+        if tid:
+            if pid not in bucket["teams"][tid]:
+                bucket["teams"][tid].append(pid)
+        else:
+            bucket["solo"].append(pid)
+
+    # Build per-competition entries, keeping only those with ≥1 Danish player
+    comp_blocks = []
+    for cid, bucket in comp_team_pids.items():
+        comp = data["competitions"].get(str(cid), {})
+        if comp.get("status") == "removed":
+            continue
+        cname = comp.get("name", "Unknown")
+
+        entries: list[dict] = []
+
+        # Team-based registrations
+        for tid, pids in bucket["teams"].items():
+            if not any(pid in danish_pids for pid in pids):
+                continue
+            names = []
+            for pid in pids:
+                p = data["players"].get(str(pid))
+                if not p:
+                    continue
+                nm = f"{p['first_name']} {p['last_name']}"
+                names.append({"name": nm, "is_dk": pid in danish_pids})
+            if not names:
+                continue
+            dk_names = [n for n in names if n["is_dk"]]
+            sort_key = min(
+                (n["name"].split()[-1].lower(), n["name"].lower()) for n in dk_names
+            )
+            entries.append({"names": names, "sort_key": sort_key})
+
+        # Solo registrations (singles)
+        for pid in bucket["solo"]:
+            if pid not in danish_pids:
+                continue
+            p = data["players"].get(str(pid))
+            if not p:
+                continue
+            nm = f"{p['first_name']} {p['last_name']}"
+            entries.append({
+                "names": [{"name": nm, "is_dk": True}],
+                "sort_key": (nm.split()[-1].lower(), nm.lower()),
+            })
+
+        if not entries:
+            continue
+
+        entries.sort(key=lambda e: e["sort_key"])
+        n_danes = sum(1 for e in entries for n in e["names"] if n["is_dk"])
+        comp_blocks.append({
+            "name": cname,
+            "entries": entries,
+            "n_danes": n_danes,
+            "n_entries": len(entries),
+        })
+
+    comp_blocks.sort(key=lambda c: (-c["n_danes"], c["name"]))
+
+    total_danes = len(danish_pids)
+    total_regs = sum(c["n_danes"] for c in comp_blocks)
+
+    # Render HTML
+    name = escape(tournament.get("name") or "")
+    code = escape(tournament.get("code") or "")
+    start = (tournament.get("start_at") or "")[:10]
+    end = (tournament.get("end_at") or "")[:10]
+    generated_at = datetime.now(ZoneInfo("Europe/Copenhagen")).strftime("%Y-%m-%d %H:%M %Z")
+
+    comps_html_parts = []
+    for cb in comp_blocks:
+        rows = ""
+        for e in cb["entries"]:
+            pieces = []
+            for n in e["names"]:
+                flag = ' <span class="dk-flag">🇩🇰</span>' if n["is_dk"] else ""
+                cls = "reg-dk" if n["is_dk"] else "reg-other"
+                pieces.append(f'<span class="{cls}">{escape(n["name"])}{flag}</span>')
+            rows += f'<li class="reg-row">{" / ".join(pieces)}</li>\n'
+        comps_html_parts.append(f"""
+<div class="competition">
+  <div class="comp-header">
+    <h3>{escape(cb['name'])}</h3>
+    <div class="comp-meta"><span class="comp-record">{cb['n_danes']} Danish · {cb['n_entries']} entries</span></div>
+  </div>
+  <ul class="reg-list">{rows}</ul>
+</div>
+""")
+
+    comps_html = "\n".join(comps_html_parts) if comps_html_parts else \
+        "<p style='text-align:center;color:var(--text-dim);padding:2rem;'>No Danish registrations found.</p>"
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🇩🇰 Danish Registrations — {name}</title>
+<style>
+:root {{
+  --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a;
+  --text: #e4e4e7; --text-dim: #9ca3af; --accent: #3b82f6; --rank: #f59e0b;
+}}
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+body {{
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.5;
+  padding: 1rem; max-width: 900px; margin: 0 auto;
+}}
+header {{
+  text-align: center; padding: 2rem 1rem;
+  border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
+}}
+header h1 {{ font-size: 1.6rem; margin-bottom: 0.25rem; }}
+header .meta {{ color: var(--text-dim); font-size: 0.9rem; }}
+header .status {{
+  display: inline-block; margin-top: 0.5rem;
+  padding: 0.2rem 0.8rem; border-radius: 999px;
+  font-size: 0.85rem; background: var(--card); border: 1px solid var(--border);
+}}
+.summary {{
+  display: flex; justify-content: center; gap: 2rem;
+  margin-bottom: 1.5rem; color: var(--text-dim); font-size: 0.9rem;
+}}
+.generated {{ color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem; }}
+.competition {{
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 0.75rem; padding: 0.75rem 1rem;
+}}
+.comp-header {{
+  display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;
+}}
+.comp-header h3 {{ font-size: 1rem; font-weight: 600; color: var(--accent); }}
+.comp-meta {{ font-size: 0.8rem; color: var(--text-dim); }}
+.reg-list {{ list-style: none; padding: 0; margin: 0; }}
+.reg-row {{
+  padding: 0.3rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}}
+.reg-row:first-child {{ border-top: none; }}
+.reg-other {{ color: var(--text-dim); }}
+.dk-flag {{ font-size: 0.75rem; }}
+footer {{
+  text-align: center; padding: 2rem 0 1rem;
+  color: var(--text-dim); font-size: 0.75rem;
+}}
+footer a {{ color: var(--accent); text-decoration: none; }}
+@media (max-width: 600px) {{
+  body {{ padding: 0.5rem; }}
+  .comp-header {{ flex-direction: column; }}
+}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🇩🇰 Danish Registrations</h1>
+  <div class="meta">{name} · {start} — {end}</div>
+  <div class="status">📋 Not started yet</div>
+  <div class="generated">Report generated at {generated_at}</div>
+</header>
+
+<div class="summary">
+  <span>{total_danes} Danish players · {total_regs} registrations</span>
+  <span><a href="https://app.tablesoccer.org/p/{code}" target="_blank" style="color:var(--accent);text-decoration:none;">View on Coral ↗</a></span>
+</div>
+
+{comps_html}
+
+<footer>
+  Data from <a href="https://app.tablesoccer.org/p/{code}">app.tablesoccer.org</a>
+</footer>
+
+</body>
+</html>"""
 
 
 def render_html(tournament: dict, player_sections: list[dict], active_players: list[dict] | None = None) -> str:
