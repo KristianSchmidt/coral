@@ -30,6 +30,33 @@ header .status {
   display: flex; justify-content: center; gap: 2rem;
   margin-bottom: 1.5rem; color: var(--text-dim); font-size: 0.9rem;
 }
+.section-heading {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 0.75rem;
+}
+.stream-section {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1rem; margin-bottom: 1.5rem;
+}
+.stream-section.has-streaming {
+  border-color: var(--rank);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 24px rgba(245, 158, 11, 0.08);
+}
+.stream-section h2 { font-size: 1.1rem; }
+.notify-button {
+  background: var(--accent); color: white; border: 0; border-radius: 999px;
+  padding: 0.35rem 0.8rem; cursor: pointer; font-size: 0.8rem; white-space: nowrap;
+}
+.notify-button[disabled] { cursor: default; opacity: 0.65; }
+.stream-row {
+  display: flex; gap: 0.75rem; padding: 0.55rem 0; border-top: 1px solid var(--border);
+}
+.stream-row:first-of-type { border-top: none; }
+.stream-table { flex: 0 0 4.5rem; color: var(--rank); font-weight: 700; }
+.stream-comp { color: var(--text-dim); font-size: 0.8rem; }
+.stream-team.dk { color: var(--rank); font-weight: 700; }
+.versus, .stream-score, .stream-empty { color: var(--text-dim); }
+.stream-score { margin-left: 0.35rem; font-variant-numeric: tabular-nums; }
 .generated { color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem; }
 .competition {
   background: var(--card); border: 1px solid var(--border); border-radius: 8px;
@@ -58,6 +85,9 @@ footer a { color: var(--accent); text-decoration: none; }
 @media (max-width: 600px) {
   body { padding: 0.5rem; }
   .comp-header { flex-direction: column; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
+  .stream-row { flex-direction: column; gap: 0.25rem; }
+  .stream-table { flex-basis: auto; }
 }
 </style>
 </head>
@@ -67,13 +97,23 @@ footer a { color: var(--accent); text-decoration: none; }
   <h1>🇩🇰 Danish Registrations</h1>
   <div class="meta">World Series Bonzini 2026 · 2026-06-04 — 2026-06-07</div>
   <div class="status">📋 Not started yet</div>
-  <div class="generated">Report generated at 2026-06-01 22:30 CEST</div>
+  <div class="generated">Report generated at 2026-06-01 22:40 CEST</div>
 </header>
 
 <div class="summary">
   <span>52 Danish players · 201 registrations</span>
   <span><a href="https://app.tablesoccer.org/p/7L5JM6" target="_blank" style="color:var(--accent);text-decoration:none;">View on Coral ↗</a></span>
 </div>
+
+
+<section class="stream-section" aria-live="polite">
+  <div class="section-heading">
+    <h2>📺 Danish players on stream tables</h2>
+    <button type="button" class="notify-button" id="enable-stream-notifications">Enable notifications</button>
+  </div>
+  <p class="stream-empty">No Danish players are currently live on tables 1–4.</p>
+</section>
+
 
 
 <div class="competition">
@@ -295,6 +335,113 @@ footer a { color: var(--accent); text-decoration: none; }
 <footer>
   Data from <a href="https://app.tablesoccer.org/p/7L5JM6">app.tablesoccer.org</a>
 </footer>
+
+<script id="streaming-matches-data" type="application/json">[]</script>
+<script>
+(function () {
+  const STORAGE_KEY = 'coral-streaming-match-ids:7L5JM6';
+  const NOTIFY_KEY = 'coral-streaming-notifications:7L5JM6';
+  const CHECK_MS = 2 * 60 * 1000;
+
+  function currentMatches() {
+    const el = document.getElementById('streaming-matches-data');
+    if (!el) return [];
+    try { return JSON.parse(el.textContent || '[]'); } catch (_) { return []; }
+  }
+
+  function matchId(match) {
+    return String(match.id) + ':table-' + String(match.table);
+  }
+
+  function describe(match) {
+    return 'Table ' + match.table + ': ' + match.home + ' vs ' + match.away;
+  }
+
+  function notificationEnabled() {
+    return localStorage.getItem(NOTIFY_KEY) === '1' &&
+      'Notification' in window && Notification.permission === 'granted';
+  }
+
+  function setButtonState() {
+    const button = document.getElementById('enable-stream-notifications');
+    if (!button) return;
+    if (!('Notification' in window)) {
+      button.textContent = 'Notifications unavailable';
+      button.disabled = true;
+    } else if (Notification.permission === 'granted' && localStorage.getItem(NOTIFY_KEY) === '1') {
+      button.textContent = 'Notifications enabled';
+      button.disabled = true;
+    } else if (Notification.permission === 'denied') {
+      button.textContent = 'Notifications blocked';
+      button.disabled = true;
+    }
+  }
+
+  function attachButton() {
+    const button = document.getElementById('enable-stream-notifications');
+    if (!button || button.dataset.notificationsBound === '1') return;
+    button.dataset.notificationsBound = '1';
+    button.addEventListener('click', async () => {
+      if (!('Notification' in window)) return;
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        localStorage.setItem(NOTIFY_KEY, '1');
+        remember(currentMatches());
+      }
+      setButtonState();
+    });
+  }
+
+  function remember(matches) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(matches.map(matchId)));
+  }
+
+  function notifyNewMatches(matches) {
+    const previous = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+    const fresh = matches.filter((match) => !previous.has(matchId(match)));
+    if (fresh.length && notificationEnabled()) {
+      const first = fresh[0];
+      new Notification('Danish player on stream table', {
+        body: fresh.length === 1 ? describe(first) : fresh.length + ' Danish stream-table matches are live',
+        tag: 'coral-streaming-7L5JM6',
+        renotify: true,
+      });
+    }
+    remember(matches);
+  }
+
+  async function checkForUpdates() {
+    try {
+      const response = await fetch(window.location.href.split('#')[0], { cache: 'no-store' });
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const data = doc.getElementById('streaming-matches-data');
+      if (!data) return;
+      const nextSection = doc.querySelector('.stream-section');
+      const currentSection = document.querySelector('.stream-section');
+      if (nextSection && currentSection) {
+        currentSection.replaceWith(nextSection);
+        attachButton();
+        setButtonState();
+      }
+      notifyNewMatches(JSON.parse(data.textContent || '[]'));
+    } catch (_) {
+      // Static hosting can be temporarily stale/unavailable; try again later.
+    }
+  }
+
+  const initialMatches = currentMatches();
+  if (!localStorage.getItem(STORAGE_KEY)) {
+    remember(initialMatches);
+  } else {
+    notifyNewMatches(initialMatches);
+  }
+
+  attachButton();
+  setButtonState();
+  setInterval(checkForUpdates, CHECK_MS);
+})();
+</script>
 
 </body>
 </html>
