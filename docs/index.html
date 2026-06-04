@@ -78,6 +78,26 @@ header .status {
 .stream-section h2 {
   font-size: 1.1rem;
 }
+.stream-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+.stream-links a, .stream-table a {
+  color: var(--rank);
+  font-weight: 700;
+  text-decoration: none;
+}
+.stream-links a {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+}
+.stream-links a:hover, .stream-table a:hover {
+  text-decoration: underline;
+}
 .notify-button {
   background: var(--accent);
   color: white;
@@ -325,7 +345,7 @@ footer a { color: var(--accent); text-decoration: none; }
   <h1>🇩🇰 Danish Players</h1>
   <div class="meta">World Series Bonzini 2026 · 2026-06-04 — 2026-06-07</div>
   <div class="status">Playing</div>
-  <div class="generated">Report generated at 2026-06-04 13:30 CEST</div>
+  <div class="generated">Report generated at 2026-06-04 13:38 CEST</div>
 </header>
 
 <div class="summary">
@@ -395,18 +415,19 @@ footer a { color: var(--accent); text-decoration: none; }
     <h2>📺 Danish players on stream tables</h2>
     <button type="button" class="notify-button" id="enable-stream-notifications">Enable notifications</button>
   </div>
+  <div class="stream-links"><a href="https://www.youtube.com/watch?v=7sws9wu6ZOs" target="_blank" rel="noopener">Table 1</a><a href="https://www.youtube.com/watch?v=ESUcgmv6G8k" target="_blank" rel="noopener">Table 2</a><a href="https://www.youtube.com/watch?v=4m8s5wOrxEE" target="_blank" rel="noopener">Table 3</a><a href="https://www.youtube.com/watch?v=JChx-dpKezE" target="_blank" rel="noopener">Table 4</a><a href="https://www.youtube.com/watch?v=p9h31oWkiEM" target="_blank" rel="noopener">Table 5</a><a href="https://www.youtube.com/watch?v=rd-YuMnlZTE" target="_blank" rel="noopener">Table 6</a><a href="https://www.youtube.com/watch?v=YX-RgzwKzEY" target="_blank" rel="noopener">Table 7</a><a href="https://www.youtube.com/watch?v=NiuWu_Yqusk" target="_blank" rel="noopener">Table 8</a></div>
   <div class="stream-row">
-  <div class="stream-table">Table 3</div>
-  <div class="stream-match">
-    <div class="stream-comp">Open Classic · Main Round</div>
-    <div><span class="stream-team dk">Marc Krogen / Karl-Emil Bruhn Poulsen</span> <span class="versus">vs</span> <span class="stream-team">Gilbert Dacunha / Paul De Sousa Carvalho</span> </div>
-  </div>
-</div>
-<div class="stream-row">
-  <div class="stream-table">Table 4</div>
+  <div class="stream-table"><a href="https://www.youtube.com/watch?v=JChx-dpKezE" target="_blank" rel="noopener">Table 4</a></div>
   <div class="stream-match">
     <div class="stream-comp">Open Classic · Main Round</div>
     <div><span class="stream-team dk">Niels Wonsyld / Gaël Lagrange</span> <span class="versus">vs</span> <span class="stream-team">Romain Jaquet / Jean-Christophe Pele</span> </div>
+  </div>
+</div>
+<div class="stream-row">
+  <div class="stream-table"><a href="https://www.youtube.com/watch?v=rd-YuMnlZTE" target="_blank" rel="noopener">Table 6</a></div>
+  <div class="stream-match">
+    <div class="stream-comp">Open Classic · Main Round</div>
+    <div><span class="stream-team dk">Hannibal Keblovszki / Martin Due</span> <span class="versus">vs</span> <span class="stream-team">Monir Batti / Julien Pierron</span> </div>
   </div>
 </div>
 
@@ -418,7 +439,7 @@ footer a { color: var(--accent); text-decoration: none; }
   <h2>🟢 Still Participating (15)</h2>
   <div class="active-row"><a class="active-name" href="#player-330634888">Amalie Wolff</a><span class="active-pair"><span class="round-tag">Round 2</span><span class="active-comp live">🔴 Open Mixed vs Mitch Eerens / Amber Starren</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-532332117">András Bence Tóvölgyi</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Sylvain Neveu / Laurent Levacher</span></span></div>
-<div class="active-row"><a class="active-name" href="#player-622583590">Marc Krogen</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Gilbert Dacunha / Paul De Sousa Carvalho</span></span></div>
+<div class="active-row"><a class="active-name" href="#player-622583590">Marc Krogen</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp waiting">⏳ Open Classic</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-792381737">Troels Trier</a><span class="active-pair"><span class="round-tag">Round 2</span><span class="active-comp live">🔴 Open Mixed vs Alexia Depagne / Julien Eveillard</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-824105510">Niels Wonsyld</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Romain Jaquet / Jean-Christophe Pele</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-923458853">Sven Wonsyld</a><span class="active-pair"><span class="round-tag">Round 2</span><span class="active-comp live">🔴 Open Mixed vs Anne Humbert / Axel Berlemont</span></span></div>
@@ -426,10 +447,10 @@ footer a { color: var(--accent); text-decoration: none; }
 <div class="active-row"><a class="active-name" href="#player-1111123014">Marcus Steffensen</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Sylvain Neveu / Laurent Levacher</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-1332860570">Jean Hickel</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Ulf Gabriel / Emmanuel Sichere</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-1493469988">Lea Kvistgaard</a><span class="active-pair"><span class="round-tag">Round 2</span><span class="active-comp live">🔴 Open Mixed vs Anne Humbert / Axel Berlemont</span></span></div>
-<div class="active-row"><a class="active-name" href="#player-1506186036">Hannibal Keblovszki</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp waiting">⏳ Open Classic</span></span></div>
-<div class="active-row"><a class="active-name" href="#player-1528332321">Martin Due</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp waiting">⏳ Open Classic</span></span></div>
+<div class="active-row"><a class="active-name" href="#player-1506186036">Hannibal Keblovszki</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Monir Batti / Julien Pierron</span></span></div>
+<div class="active-row"><a class="active-name" href="#player-1528332321">Martin Due</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Monir Batti / Julien Pierron</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-1540381936">David Ahrenkiel</a><span class="active-pair"><span class="round-tag">SF</span><span class="active-comp waiting">⏳ Open Mixed</span></span></div>
-<div class="active-row"><a class="active-name" href="#player-1741902398">Karl-Emil Bruhn Poulsen</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Gilbert Dacunha / Paul De Sousa Carvalho</span></span></div>
+<div class="active-row"><a class="active-name" href="#player-1741902398">Karl-Emil Bruhn Poulsen</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp waiting">⏳ Open Classic</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-2086293841">Lasse Møller</a><span class="active-pair"><span class="round-tag">Round 3</span><span class="active-comp live">🔴 Open Classic vs Ulf Gabriel / Emmanuel Sichere</span></span></div>
 
 </div>
@@ -494,7 +515,7 @@ footer a { color: var(--accent); text-decoration: none; }
 <tr>
   <td class="round">Round 3</td>
   <td class="result pending">…</td>
-  <td class="opponent">None</td>
+  <td class="opponent">Monir Batti / Julien Pierron</td>
   <td class="score"></td>
 </tr>
 </table>
@@ -561,7 +582,7 @@ footer a { color: var(--accent); text-decoration: none; }
 <tr>
   <td class="round">Round 3</td>
   <td class="result pending">…</td>
-  <td class="opponent">None</td>
+  <td class="opponent">Monir Batti / Julien Pierron</td>
   <td class="score"></td>
 </tr>
 </table>
@@ -3435,7 +3456,7 @@ footer a { color: var(--accent); text-decoration: none; }
   Data from <a href="https://app.tablesoccer.org/p/7L5JM6">app.tablesoccer.org</a>
 </footer>
 
-<script id="streaming-matches-data" type="application/json">[{"id": 353414, "table": 3, "competition": "Open Classic", "phase": "Main Round", "home": "Marc Krogen / Karl-Emil Bruhn Poulsen", "away": "Gilbert Dacunha / Paul De Sousa Carvalho", "home_is_dk": true, "away_is_dk": false, "score": ""}, {"id": 353424, "table": 4, "competition": "Open Classic", "phase": "Main Round", "home": "Niels Wonsyld / Gaël Lagrange", "away": "Romain Jaquet / Jean-Christophe Pele", "home_is_dk": true, "away_is_dk": false, "score": ""}]</script>
+<script id="streaming-matches-data" type="application/json">[{"id": 353424, "table": 4, "competition": "Open Classic", "phase": "Main Round", "home": "Niels Wonsyld / Gaël Lagrange", "away": "Romain Jaquet / Jean-Christophe Pele", "home_is_dk": true, "away_is_dk": false, "score": ""}, {"id": 353415, "table": 6, "competition": "Open Classic", "phase": "Main Round", "home": "Hannibal Keblovszki / Martin Due", "away": "Monir Batti / Julien Pierron", "home_is_dk": true, "away_is_dk": false, "score": ""}]</script>
 <script>
 (function () {
   const STORAGE_KEY = 'coral-streaming-match-ids:7L5JM6';
