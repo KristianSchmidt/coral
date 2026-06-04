@@ -17,6 +17,20 @@ from playwright.sync_api import sync_playwright, Page
 
 APP_URL = "https://app.tablesoccer.org"
 DBFF_ORG_ID = 853180033
+STREAMING_TABLES = range(1, 9)
+STREAM_URLS = {
+    1: "https://www.youtube.com/watch?v=7sws9wu6ZOs",
+    2: "https://www.youtube.com/watch?v=ESUcgmv6G8k",
+    3: "https://www.youtube.com/watch?v=4m8s5wOrxEE",
+    4: "https://www.youtube.com/watch?v=JChx-dpKezE",
+    5: "https://www.youtube.com/watch?v=p9h31oWkiEM",
+    6: "https://www.youtube.com/watch?v=rd-YuMnlZTE",
+    7: "https://www.youtube.com/watch?v=YX-RgzwKzEY",
+    8: "https://www.youtube.com/watch?v=NiuWu_Yqusk",
+}
+# Coral marks a match as "launched" once it is assigned to a table and started.
+# We treat "launched" as live alongside the legacy "live"/"in_progress" values.
+LIVE_STATUSES = ("live", "in_progress", "launched")
 
 
 def login(pw, username: str, password: str) -> tuple:
@@ -84,8 +98,15 @@ def fetch_tournament(page: Page, code: str) -> dict:
             id: m.id, status: m.status, phase_id: m.phase_id,
             round: m.round, home: m.home, away: m.away,
             winner: m.winner, score: m.score,
+            playground_id: m.playground_id,
+            playground2_id: m.playground2_id,
             start_at: m.start_at, end_at: m.end_at,
         }));
+
+        const playgrounds = {};
+        for (const [pid, p] of Object.entries(s.playgrounds || {})) {
+            playgrounds[pid] = { id: p.id, number: p.number, name: p.name };
+        }
 
         const phase_teams = Object.values(s.phase_teams || {}).map(pt => ({
             phase_id: pt.phase_id, team_id: pt.team_id, rank: pt.rank,
@@ -103,7 +124,7 @@ def fetch_tournament(page: Page, code: str) -> dict:
                 start_at: s.tournament?.start_at, end_at: s.tournament?.end_at,
                 address: s.tournament?.address,
             },
-            players, teams, competitions, phases, matches,
+            players, teams, competitions, phases, matches, playgrounds,
             phase_teams, competition_players, teamPlayerMap,
         };
     }""")
@@ -162,6 +183,217 @@ def team_has_danish(data: dict, team_id) -> bool:
         if p and is_danish(p):
             return True
     return False
+
+
+def table_number(match: dict, playgrounds: dict | None = None) -> int | None:
+    """Return the table number a match is assigned to, via its playground_id."""
+    if not playgrounds:
+        return None
+    pg_id = match.get("playground_id")
+    if pg_id in (None, ""):
+        return None
+    pg = playgrounds.get(str(pg_id)) or playgrounds.get(pg_id)
+    if not pg:
+        return None
+    number = pg.get("number")
+    if isinstance(number, (int, float)):
+        return int(number)
+    if isinstance(number, str) and number.isdigit():
+        return int(number)
+    return None
+
+
+def build_streaming_matches(data: dict, phase_to_comp: dict[int, int]) -> list[dict]:
+    """Live Danish matches assigned to streaming tables 1–8."""
+    streaming = []
+    playgrounds = data.get("playgrounds") or {}
+    for m in data["matches"]:
+        if m.get("status") not in LIVE_STATUSES:
+            continue
+        table = table_number(m, playgrounds)
+        if table not in STREAMING_TABLES:
+            continue
+        home_has_dk = team_has_danish(data, m["home"])
+        away_has_dk = team_has_danish(data, m["away"])
+        if not home_has_dk and not away_has_dk:
+            continue
+        comp_id = phase_to_comp.get(m["phase_id"])
+        competition = data["competitions"].get(str(comp_id), {}).get("name", "Unknown") if comp_id else "Unknown"
+        phase = data["phases"].get(str(m["phase_id"]), {}).get("name", "")
+        streaming.append({
+            "id": m["id"],
+            "table": table,
+            "competition": competition,
+            "phase": phase,
+            "home": resolve_name(data, m["home"]),
+            "away": resolve_name(data, m["away"]),
+            "home_is_dk": home_has_dk,
+            "away_is_dk": away_has_dk,
+            "score": fmt_score(m),
+        })
+    streaming.sort(key=lambda m: (m["table"], m["competition"], m["home"]))
+    return streaming
+
+
+def render_streaming_section(streaming_matches: list[dict] | None) -> tuple[str, str]:
+    """Render the stream-table section and its JSON payload."""
+    streaming_data = streaming_matches or []
+    streaming_payload = json.dumps(streaming_data, ensure_ascii=False)
+    stream_links = "".join(
+        f'<a href="{escape(url)}" target="_blank" rel="noopener">Table {table}</a>'
+        for table, url in STREAM_URLS.items()
+    )
+    if streaming_data:
+        rows = ""
+        for sm in streaming_data:
+            home_cls = "stream-team dk" if sm["home_is_dk"] else "stream-team"
+            away_cls = "stream-team dk" if sm["away_is_dk"] else "stream-team"
+            phase = f' · {escape(sm["phase"])}' if sm.get("phase") else ""
+            score = f'<span class="stream-score">{escape(sm["score"])}</span>' if sm.get("score") else ""
+            table_link = STREAM_URLS.get(sm["table"])
+            table = f'<a href="{escape(table_link)}" target="_blank" rel="noopener">Table {sm["table"]}</a>' if table_link else f'Table {sm["table"]}'
+            match = f"""<div class="stream-comp">{escape(sm['competition'])}{phase}</div>
+    <div><span class="{home_cls}">{escape(sm['home'])}</span> <span class="versus">vs</span> <span class="{away_cls}">{escape(sm['away'])}</span> {score}</div>"""
+            if table_link:
+                match = f'<a class="stream-match stream-match-link" href="{escape(table_link)}" target="_blank" rel="noopener">\n    {match}\n  </a>'
+            else:
+                match = f'<div class="stream-match">\n    {match}\n  </div>'
+            rows += f"""<div class="stream-row">
+  <div class="stream-table">{table}</div>
+  {match}
+</div>
+"""
+        return f"""
+<section class="stream-section has-streaming" aria-live="polite">
+  <div class="section-heading">
+    <h2>📺 Danish players on stream tables</h2>
+    <button type="button" class="notify-button" id="enable-stream-notifications">Enable notifications</button>
+  </div>
+  <div class="stream-links">{stream_links}</div>
+  {rows}
+</section>
+""", streaming_payload
+
+    return f"""
+<section class="stream-section" aria-live="polite">
+  <div class="section-heading">
+    <h2>📺 Danish players on stream tables</h2>
+    <button type="button" class="notify-button" id="enable-stream-notifications">Enable notifications</button>
+  </div>
+  <div class="stream-links">{stream_links}</div>
+  <p class="stream-empty">No Danish players are currently live on tables 1–8.</p>
+</section>
+""", streaming_payload
+
+
+def render_notification_script(code: str, streaming_payload: str) -> str:
+    """JavaScript for opt-in notifications from the periodically updated static page."""
+    return f"""<script id="streaming-matches-data" type="application/json">{streaming_payload}</script>
+<script>
+(function () {{
+  const STORAGE_KEY = 'coral-streaming-match-ids:{code}';
+  const NOTIFY_KEY = 'coral-streaming-notifications:{code}';
+  const CHECK_MS = 2 * 60 * 1000;
+
+  function currentMatches() {{
+    const el = document.getElementById('streaming-matches-data');
+    if (!el) return [];
+    try {{ return JSON.parse(el.textContent || '[]'); }} catch (_) {{ return []; }}
+  }}
+
+  function matchId(match) {{
+    return String(match.id) + ':table-' + String(match.table);
+  }}
+
+  function describe(match) {{
+    return 'Table ' + match.table + ': ' + match.home + ' vs ' + match.away;
+  }}
+
+  function notificationEnabled() {{
+    return localStorage.getItem(NOTIFY_KEY) === '1' &&
+      'Notification' in window && Notification.permission === 'granted';
+  }}
+
+  function setButtonState() {{
+    const button = document.getElementById('enable-stream-notifications');
+    if (!button) return;
+    if (!('Notification' in window)) {{
+      button.textContent = 'Notifications unavailable';
+      button.disabled = true;
+    }} else if (Notification.permission === 'granted' && localStorage.getItem(NOTIFY_KEY) === '1') {{
+      button.textContent = 'Notifications enabled';
+      button.disabled = true;
+    }} else if (Notification.permission === 'denied') {{
+      button.textContent = 'Notifications blocked';
+      button.disabled = true;
+    }}
+  }}
+
+  function attachButton() {{
+    const button = document.getElementById('enable-stream-notifications');
+    if (!button || button.dataset.notificationsBound === '1') return;
+    button.dataset.notificationsBound = '1';
+    button.addEventListener('click', async () => {{
+      if (!('Notification' in window)) return;
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {{
+        localStorage.setItem(NOTIFY_KEY, '1');
+        remember(currentMatches());
+      }}
+      setButtonState();
+    }});
+  }}
+
+  function remember(matches) {{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(matches.map(matchId)));
+  }}
+
+  function notifyNewMatches(matches) {{
+    const previous = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+    const fresh = matches.filter((match) => !previous.has(matchId(match)));
+    if (fresh.length && notificationEnabled()) {{
+      const first = fresh[0];
+      new Notification('Danish player on stream table', {{
+        body: fresh.length === 1 ? describe(first) : fresh.length + ' Danish stream-table matches are live',
+        tag: 'coral-streaming-{code}',
+        renotify: true,
+      }});
+    }}
+    remember(matches);
+  }}
+
+  async function checkForUpdates() {{
+    try {{
+      const response = await fetch(window.location.href.split('#')[0], {{ cache: 'no-store' }});
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const data = doc.getElementById('streaming-matches-data');
+      if (!data) return;
+      const nextSection = doc.querySelector('.stream-section');
+      const currentSection = document.querySelector('.stream-section');
+      if (nextSection && currentSection) {{
+        currentSection.replaceWith(nextSection);
+        attachButton();
+        setButtonState();
+      }}
+      notifyNewMatches(JSON.parse(data.textContent || '[]'));
+    }} catch (_) {{
+      // Static hosting can be temporarily stale/unavailable; try again later.
+    }}
+  }}
+
+  const initialMatches = currentMatches();
+  if (!localStorage.getItem(STORAGE_KEY)) {{
+    remember(initialMatches);
+  }} else {{
+    notifyNewMatches(initialMatches);
+  }}
+
+  attachButton();
+  setButtonState();
+  setInterval(checkForUpdates, CHECK_MS);
+}})();
+</script>"""
 
 
 def _score_lists(score: dict | None) -> tuple[list, list]:
@@ -578,15 +810,54 @@ def build_report(data: dict) -> str:
     #   phase being the last match)
     # Simpler heuristic: player has pending/scheduled matches, or their competition
     # is still in progress and their last match was a win (or no matches yet).
-    active_players = build_active_summary(data, danish_pids, phase_to_comp)
+    active_players = build_active_summary(
+        data, danish_pids, phase_to_comp, round_match_counts, phase_max_round
+    )
 
-    return render_html(tournament, player_sections, active_players)
+    streaming_matches = build_streaming_matches(data, phase_to_comp)
+
+    return render_html(tournament, player_sections, active_players, streaming_matches)
+
+
+def _is_qual_phase(phase_name: str) -> bool:
+    return phase_name.lower() in ("qualifications", "qualification", "kvalifikation")
+
+
+def _round_label_for_match(
+    m: dict,
+    round_match_counts: dict[tuple[int, int], int],
+    phase_max_round: dict[int, int],
+    is_qual: bool,
+) -> str:
+    """Short label for a match's round (mirrors logic in build_report)."""
+    rnd = m.get("round", 0)
+    phase_id = m["phase_id"]
+    n_matches = round_match_counts.get((phase_id, rnd), 0)
+    pos_counts = {
+        round_match_counts.get((phase_id, r), 0)
+        for r in range(1, 20)
+        if (phase_id, r) in round_match_counts
+    }
+    is_group_stage = len(pos_counts) <= 1
+
+    if (is_group_stage or is_qual) and rnd > 0:
+        return f"R{rnd}"
+    if rnd > 0:
+        max_rnd = phase_max_round.get(phase_id, rnd)
+        label = round_label_relative(rnd, max_rnd)
+        return {"Final": "F", "Semifinal": "SF", "Quarterfinal": "QF"}.get(label, label)
+    if rnd < 0:
+        label = round_label(n_matches)
+        return {"Final": "F", "Semifinal": "SF", "Quarterfinal": "QF"}.get(label, label)
+    return "R0"
 
 
 def build_active_summary(
     data: dict,
     danish_pids: set[int],
     phase_to_comp: dict[int, int],
+    round_match_counts: dict[tuple[int, int], int],
+    phase_max_round: dict[int, int],
 ) -> list[dict]:
     """Build a list of Danish players still actively participating."""
     tpm = data.get("teamPlayerMap") or {}
@@ -640,21 +911,80 @@ def build_active_summary(
             # Check if player has a pending (not finished) match in this comp
             has_pending = False
             live_match = None
+            next_pending = None
             last_match = None
+            my_comp_matches = []
             for m in data["matches"]:
                 mid_comp = phase_to_comp.get(m["phase_id"])
                 if mid_comp != comp_id:
                     continue
                 if m["home"] not in my_tids and m["away"] not in my_tids:
                     continue
+                my_comp_matches.append(m)
 
-                if m["status"] in ("live", "in_progress"):
+                if m["status"] in LIVE_STATUSES:
                     live_match = m
                     has_pending = True
                 elif m["status"] in ("scheduled", "ready", "pending"):
                     has_pending = True
+                    if next_pending is None:
+                        next_pending = m
                 if m["status"] == "finished":
                     last_match = m
+
+            # Determine "current" match for round/phase info
+            current_match = live_match or next_pending or last_match
+            round_info = None
+            if current_match is not None:
+                phase = data["phases"].get(str(current_match["phase_id"]), {})
+                phase_name = phase.get("name", "")
+                is_qual = _is_qual_phase(phase_name)
+                rlabel = _round_label_for_match(
+                    current_match, round_match_counts, phase_max_round, is_qual
+                )
+                # If we only have a finished knockout match (player won, waiting
+                # for next round), advance the label one round closer to the final.
+                if (
+                    not live_match and not next_pending
+                    and current_match is last_match
+                    and not is_qual
+                    and current_match.get("round", 0) > 0
+                ):
+                    rnd = current_match.get("round", 0)
+                    phase_id = current_match["phase_id"]
+                    pos_counts = {
+                        round_match_counts.get((phase_id, r), 0)
+                        for r in range(1, 20)
+                        if (phase_id, r) in round_match_counts
+                    }
+                    is_group_stage = len(pos_counts) <= 1
+                    if not is_group_stage:
+                        max_rnd = phase_max_round.get(phase_id, rnd)
+                        next_label = round_label_relative(rnd + 1, max_rnd)
+                        rlabel = {"Final": "F", "Semifinal": "SF",
+                                  "Quarterfinal": "QF"}.get(next_label, next_label)
+                if is_qual:
+                    qw = ql = 0
+                    for m in my_comp_matches:
+                        if m.get("status") != "finished":
+                            continue
+                        p = data["phases"].get(str(m["phase_id"]), {})
+                        if not _is_qual_phase(p.get("name", "")):
+                            continue
+                        score_val = m.get("score", {})
+                        if isinstance(score_val, dict) and score_val.get("forfeit"):
+                            continue
+                        is_home = m["home"] in my_tids
+                        winner = m.get("winner")
+                        if winner not in (1, 2):
+                            continue
+                        if (winner == 1 and is_home) or (winner == 2 and not is_home):
+                            qw += 1
+                        else:
+                            ql += 1
+                    round_info = f"Q {qw}-{ql}"
+                else:
+                    round_info = rlabel
 
             # If they have a live match, show it
             if live_match:
@@ -665,9 +995,13 @@ def build_active_summary(
                 active_comps.append({
                     "name": comp_name, "status": "live",
                     "opponent": opp_name, "score": score,
+                    "round_info": round_info,
                 })
             elif has_pending:
-                active_comps.append({"name": comp_name, "status": "playing"})
+                active_comps.append({
+                    "name": comp_name, "status": "playing",
+                    "round_info": round_info,
+                })
             elif last_match:
                 # Competition still running but no pending matches — check if
                 # their last match was a loss in a knockout phase (eliminated).
@@ -681,7 +1015,10 @@ def build_active_summary(
                 is_qual = any(q in last_phase_name for q in ("kvalifikation", "qualification", "qualifications"))
                 if won or is_qual:
                     # Won last match or still in a group/qual phase — awaiting next round
-                    active_comps.append({"name": comp_name, "status": "waiting"})
+                    active_comps.append({
+                        "name": comp_name, "status": "waiting",
+                        "round_info": round_info,
+                    })
                 # else: lost in knockout — eliminated
             else:
                 # No matches at all — only show if the player is drawn into
@@ -694,7 +1031,10 @@ def build_active_summary(
                     if phase_to_comp.get(pt["phase_id"]) == comp_id
                 )
                 if in_active_phase:
-                    active_comps.append({"name": comp_name, "status": "waiting"})
+                    active_comps.append({
+                        "name": comp_name, "status": "waiting",
+                        "round_info": round_info,
+                    })
 
         if active_comps:
             active_players.append({"name": pname, "player_id": pid, "comps": active_comps})
@@ -793,6 +1133,8 @@ def render_registrations_html(data: dict) -> str:
     start = (tournament.get("start_at") or "")[:10]
     end = (tournament.get("end_at") or "")[:10]
     generated_at = datetime.now(ZoneInfo("Europe/Copenhagen")).strftime("%Y-%m-%d %H:%M %Z")
+    streaming_html, streaming_payload = render_streaming_section([])
+    notification_script = render_notification_script(code, streaming_payload)
 
     comps_html_parts = []
     for cb in comp_blocks:
@@ -849,6 +1191,39 @@ header .status {{
   display: flex; justify-content: center; gap: 2rem;
   margin-bottom: 1.5rem; color: var(--text-dim); font-size: 0.9rem;
 }}
+.section-heading {{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 0.75rem;
+}}
+.stream-section {{
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1rem; margin-bottom: 1.5rem;
+}}
+.stream-section.has-streaming {{
+  border-color: var(--rank);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 24px rgba(245, 158, 11, 0.08);
+}}
+.stream-section h2 {{ font-size: 1.1rem; }}
+.stream-links {{ display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }}
+.stream-links a, .stream-table a {{ color: var(--rank); font-weight: 700; text-decoration: none; }}
+.stream-links a {{ border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.55rem; font-size: 0.8rem; }}
+.stream-links a:hover, .stream-table a:hover {{ text-decoration: underline; }}
+.stream-match-link {{ color: inherit; display: block; text-decoration: none; }}
+.stream-match-link:hover .stream-team {{ text-decoration: underline; }}
+.notify-button {{
+  background: var(--accent); color: white; border: 0; border-radius: 999px;
+  padding: 0.35rem 0.8rem; cursor: pointer; font-size: 0.8rem; white-space: nowrap;
+}}
+.notify-button[disabled] {{ cursor: default; opacity: 0.65; }}
+.stream-row {{
+  display: flex; gap: 0.75rem; padding: 0.55rem 0; border-top: 1px solid var(--border);
+}}
+.stream-row:first-of-type {{ border-top: none; }}
+.stream-table {{ flex: 0 0 4.5rem; color: var(--rank); font-weight: 700; }}
+.stream-comp {{ color: var(--text-dim); font-size: 0.8rem; }}
+.stream-team.dk {{ color: var(--rank); font-weight: 700; }}
+.versus, .stream-score, .stream-empty {{ color: var(--text-dim); }}
+.stream-score {{ margin-left: 0.35rem; font-variant-numeric: tabular-nums; }}
 .generated {{ color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem; }}
 .competition {{
   background: var(--card); border: 1px solid var(--border); border-radius: 8px;
@@ -877,6 +1252,9 @@ footer a {{ color: var(--accent); text-decoration: none; }}
 @media (max-width: 600px) {{
   body {{ padding: 0.5rem; }}
   .comp-header {{ flex-direction: column; }}
+  .section-heading {{ align-items: flex-start; flex-direction: column; }}
+  .stream-row {{ flex-direction: column; gap: 0.25rem; }}
+  .stream-table {{ flex-basis: auto; }}
 }}
 </style>
 </head>
@@ -894,17 +1272,26 @@ footer a {{ color: var(--accent); text-decoration: none; }}
   <span><a href="https://app.tablesoccer.org/p/{code}" target="_blank" style="color:var(--accent);text-decoration:none;">View on Coral ↗</a></span>
 </div>
 
+{streaming_html}
+
 {comps_html}
 
 <footer>
   Data from <a href="https://app.tablesoccer.org/p/{code}">app.tablesoccer.org</a>
 </footer>
 
+{notification_script}
+
 </body>
 </html>"""
 
 
-def render_html(tournament: dict, player_sections: list[dict], active_players: list[dict] | None = None) -> str:
+def render_html(
+    tournament: dict,
+    player_sections: list[dict],
+    active_players: list[dict] | None = None,
+    streaming_matches: list[dict] | None = None,
+) -> str:
     t = tournament
     name = escape(t.get("name") or "")
     code = escape(t.get("code") or "")
@@ -1009,6 +1396,9 @@ def render_html(tournament: dict, player_sections: list[dict], active_players: l
 
     generated_at = datetime.now(ZoneInfo("Europe/Copenhagen")).strftime("%Y-%m-%d %H:%M %Z")
 
+    streaming_html, streaming_payload = render_streaming_section(streaming_matches)
+    notification_script = render_notification_script(code, streaming_payload)
+
     # Build active players summary
     active_html = ""
     if active_players:
@@ -1016,15 +1406,18 @@ def render_html(tournament: dict, player_sections: list[dict], active_players: l
         for ap in active_players:
             badges = []
             for c in ap["comps"]:
+                rinfo = c.get("round_info")
+                rprefix = f'<span class="round-tag">{escape(rinfo)}</span>' if rinfo else ""
                 if c["status"] == "live":
                     label = f'{c["name"]} vs {c["opponent"]}'
                     if c.get("score"):
                         label += f' ({c["score"]})'
-                    badges.append(f'<span class="active-comp live">🔴 {escape(label)}</span>')
+                    inner = f'<span class="active-comp live">🔴 {escape(label)}</span>'
                 elif c["status"] == "playing":
-                    badges.append(f'<span class="active-comp playing">⚡ {escape(c["name"])}</span>')
+                    inner = f'<span class="active-comp playing">⚡ {escape(c["name"])}</span>'
                 else:
-                    badges.append(f'<span class="active-comp waiting">⏳ {escape(c["name"])}</span>')
+                    inner = f'<span class="active-comp waiting">⏳ {escape(c["name"])}</span>'
+                badges.append(f'<span class="active-pair">{rprefix}{inner}</span>')
             comp_badges = " ".join(badges)
             anchor = f"player-{ap['player_id']}"
             rows += f'<div class="active-row"><a class="active-name" href="#{anchor}">{escape(ap["name"])}</a>{comp_badges}</div>\n'
@@ -1100,6 +1493,96 @@ header .status {{
   margin-bottom: 1.5rem;
   color: var(--text-dim);
   font-size: 0.9rem;
+}}
+.section-heading {{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}}
+.stream-section {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}}
+.stream-section.has-streaming {{
+  border-color: var(--rank);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 24px rgba(245, 158, 11, 0.08);
+}}
+.stream-section h2 {{
+  font-size: 1.1rem;
+}}
+.stream-links {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}}
+.stream-links a, .stream-table a {{
+  color: var(--rank);
+  font-weight: 700;
+  text-decoration: none;
+}}
+.stream-links a {{
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+}}
+.stream-links a:hover, .stream-table a:hover {{
+  text-decoration: underline;
+}}
+.stream-match-link {{
+  color: inherit;
+  display: block;
+  text-decoration: none;
+}}
+.stream-match-link:hover .stream-team {{
+  text-decoration: underline;
+}}
+.notify-button {{
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}}
+.notify-button[disabled] {{
+  cursor: default;
+  opacity: 0.65;
+}}
+.stream-row {{
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border);
+}}
+.stream-row:first-of-type {{ border-top: none; }}
+.stream-table {{
+  flex: 0 0 4.5rem;
+  color: var(--rank);
+  font-weight: 700;
+}}
+.stream-comp {{
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}}
+.stream-team.dk {{
+  color: var(--rank);
+  font-weight: 700;
+}}
+.versus, .stream-score, .stream-empty {{
+  color: var(--text-dim);
+}}
+.stream-score {{
+  margin-left: 0.35rem;
+  font-variant-numeric: tabular-nums;
 }}
 .player-card {{
   background: var(--card);
@@ -1218,11 +1701,32 @@ a.active-name {{
 a.active-name:hover {{
   color: var(--accent);
 }}
+.active-pair {{
+  display: inline-flex;
+  align-items: stretch;
+  white-space: nowrap;
+}}
+.round-tag {{
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px 0 0 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-right: 0;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+}}
 .active-comp {{
   font-size: 0.8rem;
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
   white-space: nowrap;
+}}
+.active-pair .active-comp {{
+  border-radius: 0 999px 999px 0;
 }}
 .active-comp.playing {{
   background: rgba(34, 197, 94, 0.15);
@@ -1274,6 +1778,9 @@ footer a {{ color: var(--accent); text-decoration: none; }}
 @media (max-width: 600px) {{
   body {{ padding: 0.5rem; }}
   .comp-header {{ flex-direction: column; }}
+  .section-heading {{ align-items: flex-start; flex-direction: column; }}
+  .stream-row {{ flex-direction: column; gap: 0.25rem; }}
+  .stream-table {{ flex-basis: auto; }}
 }}
 </style>
 </head>
@@ -1298,6 +1805,8 @@ footer a {{ color: var(--accent); text-decoration: none; }}
   </select>
 </div>
 
+{streaming_html}
+
 {active_html}
 
 {players_html}
@@ -1305,6 +1814,8 @@ footer a {{ color: var(--accent); text-decoration: none; }}
 <footer>
   Data from <a href="https://app.tablesoccer.org/p/{code}">app.tablesoccer.org</a>
 </footer>
+
+{notification_script}
 
 </body>
 </html>"""
