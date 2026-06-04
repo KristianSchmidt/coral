@@ -3,85 +3,292 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🇩🇰 Danish Registrations — World Series Bonzini 2026</title>
+<title>🇩🇰 Danish Players — World Series Bonzini 2026</title>
 <style>
 :root {
-  --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a;
-  --text: #e4e4e7; --text-dim: #9ca3af; --accent: #3b82f6; --rank: #f59e0b;
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --border: #2a2d3a;
+  --text: #e4e4e7;
+  --text-dim: #9ca3af;
+  --win: #22c55e;
+  --loss: #ef4444;
+  --accent: #3b82f6;
+  --rank: #f59e0b;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg); color: var(--text); line-height: 1.5;
-  padding: 1rem; max-width: 900px; margin: 0 auto;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 header {
-  text-align: center; padding: 2rem 1rem;
-  border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
 }
-header h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
-header .meta { color: var(--text-dim); font-size: 0.9rem; }
+header h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+header .meta {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
 header .status {
-  display: inline-block; margin-top: 0.5rem;
-  padding: 0.2rem 0.8rem; border-radius: 999px;
-  font-size: 0.85rem; background: var(--card); border: 1px solid var(--border);
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: var(--card);
+  border: 1px solid var(--border);
 }
 .summary {
-  display: flex; justify-content: center; gap: 2rem;
-  margin-bottom: 1.5rem; color: var(--text-dim); font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
 }
 .section-heading {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
 }
 .stream-section {
-  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-  padding: 1rem; margin-bottom: 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
 }
 .stream-section.has-streaming {
   border-color: var(--rank);
   box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 24px rgba(245, 158, 11, 0.08);
 }
-.stream-section h2 { font-size: 1.1rem; }
-.notify-button {
-  background: var(--accent); color: white; border: 0; border-radius: 999px;
-  padding: 0.35rem 0.8rem; cursor: pointer; font-size: 0.8rem; white-space: nowrap;
+.stream-section h2 {
+  font-size: 1.1rem;
 }
-.notify-button[disabled] { cursor: default; opacity: 0.65; }
+.notify-button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.notify-button[disabled] {
+  cursor: default;
+  opacity: 0.65;
+}
 .stream-row {
-  display: flex; gap: 0.75rem; padding: 0.55rem 0; border-top: 1px solid var(--border);
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border);
 }
 .stream-row:first-of-type { border-top: none; }
-.stream-table { flex: 0 0 4.5rem; color: var(--rank); font-weight: 700; }
-.stream-comp { color: var(--text-dim); font-size: 0.8rem; }
-.stream-team.dk { color: var(--rank); font-weight: 700; }
-.versus, .stream-score, .stream-empty { color: var(--text-dim); }
-.stream-score { margin-left: 0.35rem; font-variant-numeric: tabular-nums; }
-.generated { color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem; }
+.stream-table {
+  flex: 0 0 4.5rem;
+  color: var(--rank);
+  font-weight: 700;
+}
+.stream-comp {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+.stream-team.dk {
+  color: var(--rank);
+  font-weight: 700;
+}
+.versus, .stream-score, .stream-empty {
+  color: var(--text-dim);
+}
+.stream-score {
+  margin-left: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+.player-card > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.player-card > summary::-webkit-details-marker { display: none; }
+.player-card > summary::before {
+  content: '▶';
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+}
+.player-card[open] > summary::before { transform: rotate(90deg); }
+.player-name { font-weight: 600; font-size: 1.05rem; }
+.player-record { color: var(--text-dim); font-size: 0.85rem; white-space: nowrap; }
 .competition {
-  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-  margin-bottom: 0.75rem; padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid var(--border);
 }
 .comp-header {
-  display: flex; justify-content: space-between; align-items: baseline;
-  flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
 }
-.comp-header h3 { font-size: 1rem; font-weight: 600; color: var(--accent); }
-.comp-meta { font-size: 0.8rem; color: var(--text-dim); }
-.reg-list { list-style: none; padding: 0; margin: 0; }
-.reg-row {
-  padding: 0.3rem 0;
-  border-top: 1px solid var(--border);
-  font-size: 0.9rem;
+.comp-header h3 { font-size: 0.95rem; font-weight: 500; color: var(--accent); }
+.comp-meta { font-size: 0.8rem; color: var(--text-dim); display: flex; gap: 0.5rem; align-items: baseline; }
+.rank {
+  background: var(--rank);
+  color: #000;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
-.reg-row:first-child { border-top: none; }
-.reg-other { color: var(--text-dim); }
+.comp-record { white-space: nowrap; }
+table.matches {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+table.matches td { padding: 0.25rem 0.4rem; }
+.phase-header td {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  padding-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.round { color: var(--text-dim); width: 5rem; white-space: nowrap; }
+.result { width: 2rem; text-align: center; font-weight: 700; border-radius: 3px; }
+.result.win { color: var(--win); }
+.result.loss { color: var(--loss); }
+.result.pending { color: var(--text-dim); }
+.opponent { }
+.score { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
 .dk-flag { font-size: 0.75rem; }
+.forfeit { font-size: 0.7rem; color: var(--text-dim); font-style: italic; }
+.qual-fold {
+  margin: 0.25rem 0;
+}
+.qual-fold > summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  padding: 0.25rem 0;
+  user-select: none;
+}
+.qual-fold > summary:hover {
+  color: var(--text);
+}
+.qual-fold table.matches {
+  margin-top: 0.25rem;
+}
+.active-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.active-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+.active-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.3rem 0;
+}
+a.active-name {
+  font-weight: 600;
+  min-width: 10rem;
+  margin-right: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
+}
+a.active-name:hover {
+  color: var(--accent);
+}
+.active-comp {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.active-comp.playing {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid var(--win);
+  color: var(--win);
+}
+.active-comp.live {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--loss);
+  color: var(--loss);
+  font-weight: 600;
+}
+.active-comp.waiting {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid var(--rank);
+  color: var(--rank);
+}
 footer {
-  text-align: center; padding: 2rem 0 1rem;
-  color: var(--text-dim); font-size: 0.75rem;
+  text-align: center;
+  padding: 2rem 0 1rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
 }
 footer a { color: var(--accent); text-decoration: none; }
+.player-jump {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.player-jump select {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+}
+.player-jump select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.generated {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
 @media (max-width: 600px) {
   body { padding: 0.5rem; }
   .comp-header { flex-direction: column; }
@@ -94,15 +301,70 @@ footer a { color: var(--accent); text-decoration: none; }
 <body>
 
 <header>
-  <h1>🇩🇰 Danish Registrations</h1>
+  <h1>🇩🇰 Danish Players</h1>
   <div class="meta">World Series Bonzini 2026 · 2026-06-04 — 2026-06-07</div>
-  <div class="status">📋 Not started yet</div>
-  <div class="generated">Report generated at 2026-06-04 09:10 CEST</div>
+  <div class="status">Playing</div>
+  <div class="generated">Report generated at 2026-06-04 09:20 CEST</div>
 </header>
 
 <div class="summary">
-  <span>52 Danish players · 201 registrations</span>
-  <span><a href="https://app.tablesoccer.org/p/7L5JM6" target="_blank" style="color:var(--accent);text-decoration:none;">View on Coral ↗</a></span>
+  <span>49 Danish players tracked</span>
+  <span><a href="https://app.tablesoccer.org/p/7L5JM6" target="_blank">View on Coral ↗</a></span>
+</div>
+
+<div class="player-jump">
+  <select onchange="if(this.value)location.hash=this.value;this.selectedIndex=0;">
+    <option value="">Jump to player…</option>
+    <option value="#player-1590357200">Abdel-Aziz, Tamara</option>
+    <option value="#player-1540381936">Ahrenkiel, David</option>
+    <option value="#player-27627612">Andreasen, Felix With</option>
+    <option value="#player-183709252">Bali, Krisztián</option>
+    <option value="#player-2002130705">Billing, Michael</option>
+    <option value="#player-1080379575">Bjerre, Alexander</option>
+    <option value="#player-281755549">Bjerrum, Albert Nord</option>
+    <option value="#player-2143389511">Burgaard, Mille</option>
+    <option value="#player-1920850118">Bæk, Adam</option>
+    <option value="#player-1592823355">Dreijer, Julie Hallas</option>
+    <option value="#player-1528332321">Due, Martin</option>
+    <option value="#player-794323815">Frank, Christian</option>
+    <option value="#player-1543982052">Grosbøll-Poulsen, Troels</option>
+    <option value="#player-721400133">Hansen, Morten Mandrup</option>
+    <option value="#player-1248174684">Hardenberg, Asker</option>
+    <option value="#player-1332860570">Hickel, Jean</option>
+    <option value="#player-1080041692">Jensen, Lars</option>
+    <option value="#player-854943416">Johansson, Sebastian</option>
+    <option value="#player-1579783884">Kampmann, Jakob</option>
+    <option value="#player-1506186036">Keblovszki, Hannibal</option>
+    <option value="#player-659375274">Kiilerich, Morten</option>
+    <option value="#player-1377060321">Kragh, Kim</option>
+    <option value="#player-622583590">Krogen, Marc</option>
+    <option value="#player-1493469988">Kvistgaard, Lea</option>
+    <option value="#player-754939466">Larsen, Ditte Marie</option>
+    <option value="#player-512186028">Lillevang, Rune</option>
+    <option value="#player-858812793">Linneberg, Anja</option>
+    <option value="#player-1659409469">Manaa, Kevin Lee</option>
+    <option value="#player-293841156">Meilstrup, Louise</option>
+    <option value="#player-215205555">Miller, Tage</option>
+    <option value="#player-2086293841">Møller, Lasse</option>
+    <option value="#player-279336456">Odgaard, Sofie Solsø</option>
+    <option value="#player-886667185">Petræus, Rene</option>
+    <option value="#player-1741902398">Poulsen, Karl-Emil Bruhn</option>
+    <option value="#player-116535655">Rasmussen, Peter Fjordside</option>
+    <option value="#player-424918288">Rosengaard, Jesper</option>
+    <option value="#player-1560056126">Savery, Emil</option>
+    <option value="#player-346282575">Schmidt, Kristian</option>
+    <option value="#player-344091076">Sebulonsen, Rasmus</option>
+    <option value="#player-106953892">Severinsen, Gustav</option>
+    <option value="#player-1111123014">Steffensen, Marcus</option>
+    <option value="#player-328168865">Tejlbo, Miki</option>
+    <option value="#player-475168208">Toubro, Peter</option>
+    <option value="#player-792381737">Trier, Troels</option>
+    <option value="#player-532332117">Tóvölgyi, András Bence</option>
+    <option value="#player-1480430537">Veje, Malene</option>
+    <option value="#player-759459450">Wejse, Marco Frøkjær</option>
+    <option value="#player-330634888">Wolff, Amalie</option>
+    <option value="#player-923458853">Wonsyld, Sven</option>
+  </select>
 </div>
 
 
@@ -116,220 +378,1237 @@ footer a { color: var(--accent); text-decoration: none; }
 
 
 
-<div class="competition">
-  <div class="comp-header">
-    <h3>Open Doubles</h3>
-    <div class="comp-meta"><span class="comp-record">43 Danish · 23 entries</span></div>
-  </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">David Ahrenkiel <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rene Petræus <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Felix With Andreasen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Krisztián Bali <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Miki Tejlbo <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-other">Jan-Henrik Reigardt</span> / <span class="reg-dk">Michael Billing <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rasmus Sebulonsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Alexander Bjerre <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Albert Nord Bjerrum <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Peter Toubro <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Mille Burgaard <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Gustav Severinsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Jakob Kampmann <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Adam Bæk <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Martin Due <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Christian Frank <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Anja Linneberg <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Tage Miller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Emil Savery <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Asker Hardenberg <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Jean Hickel <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Lasse Møller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lars Jensen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Gonçalo Dos Santos</span></li>
-<li class="reg-row"><span class="reg-dk">Sebastian Johansson <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Jesper Rosengaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kim Kragh <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Morten Kiilerich <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Marc Krogen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kristian Schmidt <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Rune Lillevang <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Marcus Steffensen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Malte Thyrring <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Troels Trier <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Yannik Hansen</span></li>
-<li class="reg-row"><span class="reg-dk">Niels Wonsyld <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Sven Wonsyld <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+<div class="active-section">
+  <h2>🟢 Still Participating (50)</h2>
+  <div class="active-row"><a class="active-name" href="#player-27627612">Felix With Andreasen</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-106953892">Gustav Severinsen</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-116535655">Peter Fjordside Rasmussen</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-183709252">Krisztián Bali</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-215205555">Tage Miller</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-279336456">Sofie Solsø Odgaard</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-281755549">Albert Nord Bjerrum</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-293841156">Louise Meilstrup</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-328168865">Miki Tejlbo</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-330634888">Amalie Wolff</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-344091076">Rasmus Sebulonsen</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-346282575">Kristian Schmidt</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-424918288">Jesper Rosengaard</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-475168208">Peter Toubro</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-512186028">Rune Lillevang</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-532332117">András Bence Tóvölgyi</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-622583590">Marc Krogen</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-659375274">Morten Kiilerich</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-721400133">Morten Mandrup Hansen</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-754939466">Ditte Marie Larsen</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-759459450">Marco Frøkjær Wejse</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-792381737">Troels Trier</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-794323815">Christian Frank</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-824105510">Niels Wonsyld</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-854943416">Sebastian Johansson</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-858812793">Anja Linneberg</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-886667185">Rene Petræus</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-923458853">Sven Wonsyld</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1080041692">Lars Jensen</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1080379575">Alexander Bjerre</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1111123014">Marcus Steffensen</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1248174684">Asker Hardenberg</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1332860570">Jean Hickel</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1377060321">Kim Kragh</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1480430537">Malene Veje</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1493469988">Lea Kvistgaard</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1506186036">Hannibal Keblovszki</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1528332321">Martin Due</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1540381936">David Ahrenkiel</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1543982052">Troels Grosbøll-Poulsen</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1560056126">Emil Savery</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1579783884">Jakob Kampmann</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1590357200">Tamara Abdel-Aziz</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1592823355">Julie Hallas Dreijer</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1659409469">Kevin Lee Manaa</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-1741902398">Karl-Emil Bruhn Poulsen</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-1920850118">Adam Bæk</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+<div class="active-row"><a class="active-name" href="#player-2002130705">Michael Billing</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-2086293841">Lasse Møller</a><span class="active-comp waiting">⏳ Open Classic</span></div>
+<div class="active-row"><a class="active-name" href="#player-2143389511">Mille Burgaard</a><span class="active-comp waiting">⏳ Open Mixed</span></div>
+
 </div>
 
 
+
+<details class="player-card" id="player-1920850118" open>
+  <summary>
+    <span class="player-name">Adam Bæk</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Men Singles</h3>
-    <div class="comp-meta"><span class="comp-record">39 Danish · 39 entries</span></div>
+    <h3>Open Mixed (with Louise Meilstrup)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">David Ahrenkiel <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Felix With Andreasen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Krisztián Bali <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Michael Billing <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Albert Nord Bjerrum <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Adam Bæk <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Martin Due <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Christian Frank <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Asker Hardenberg <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Jean Hickel <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lars Jensen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Sebastian Johansson <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Jakob Kampmann <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Morten Kiilerich <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kim Kragh <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Marc Krogen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rune Lillevang <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Tage Miller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lasse Møller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rene Petræus <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Jesper Rosengaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Emil Savery <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kristian Schmidt <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rasmus Sebulonsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Gustav Severinsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Miki Tejlbo <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Malte Thyrring <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Peter Toubro <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Troels Trier <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Niels Wonsyld <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Sven Wonsyld <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Clémence Penalva / Damien Willemet</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-281755549" open>
+  <summary>
+    <span class="player-name">Albert Nord Bjerrum</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>ITSF League - Men</h3>
-    <div class="comp-meta"><span class="comp-record">37 Danish · 10 entries</span></div>
+    <h3>Open Classic (with Peter Toubro)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">David Ahrenkiel <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Jean Hickel <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Lasse Møller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Morten Kiilerich <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Kim Kragh <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Rene Petræus <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Gustav Severinsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Felix With Andreasen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Mille Burgaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Krisztián Bali <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Michael Billing <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Miki Tejlbo <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rasmus Sebulonsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Alexander Bjerre <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lars Jensen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Albert Nord Bjerrum <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Peter Toubro <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Troels Trier <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Adam Bæk <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Sebastian Johansson <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Jakob Kampmann <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Jesper Rosengaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Marcus Steffensen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Emil Savery <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Asker Hardenberg <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Malte Thyrring <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Marc Krogen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Rune Lillevang <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Kristian Schmidt <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Niels Wonsyld <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Sven Wonsyld <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Gaël Lagrange</span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Nevio Madeo / Jannik Fuchs</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-1080379575" open>
+  <summary>
+    <span class="player-name">Alexander Bjerre</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Open Classic</h3>
-    <div class="comp-meta"><span class="comp-record">28 Danish · 15 entries</span></div>
+    <h3>Open Classic (with Rasmus Sebulonsen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Rene Petræus <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Felix With Andreasen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Krisztián Bali <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Miki Tejlbo <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-other">Jan-Henrik Reigardt</span> / <span class="reg-dk">Michael Billing <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Rasmus Sebulonsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Alexander Bjerre <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Albert Nord Bjerrum <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Peter Toubro <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Martin Due <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Christian Frank <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Emil Savery <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Asker Hardenberg <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Jean Hickel <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Lasse Møller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Sebastian Johansson <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Jesper Rosengaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kim Kragh <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Morten Kiilerich <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Marc Krogen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Kristian Schmidt <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Rune Lillevang <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">András Bence Tóvölgyi <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Marcus Steffensen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Niels Wonsyld <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Gaël Lagrange</span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Stéphane Renault / Karl-William Sherlaw</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-330634888" open>
+  <summary>
+    <span class="player-name">Amalie Wolff</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Open Mixed</h3>
-    <div class="comp-meta"><span class="comp-record">22 Danish · 12 entries</span></div>
+    <h3>Open Mixed (with Lars Jensen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Tage Miller <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-other">Pia-Louise Claussen</span> / <span class="reg-dk">David Ahrenkiel <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Mille Burgaard <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Gustav Severinsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Adam Bæk <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Louise Meilstrup <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Julie Hallas Dreijer <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Anja Linneberg <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Troels Grosbøll-Poulsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Morten Mandrup Hansen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lars Jensen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Amalie Wolff <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Jakob Kampmann <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lea Kvistgaard <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Sven Wonsyld <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Malene Veje <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-other">Ana Bobe</span> / <span class="reg-dk">Troels Trier <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Aurore Lejard / Stephan Garnier</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-532332117" open>
+  <summary>
+    <span class="player-name">András Bence Tóvölgyi</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Women Singles</h3>
-    <div class="comp-meta"><span class="comp-record">9 Danish · 9 entries</span></div>
+    <h3>Open Classic (with Marcus Steffensen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Mille Burgaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Julie Hallas Dreijer <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Lea Kvistgaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Louise Meilstrup <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Malene Veje <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Amalie Wolff <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Anthony Francois / Jean-Emile Maurice</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-858812793" open>
+  <summary>
+    <span class="player-name">Anja Linneberg</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Nations Cup - Men</h3>
-    <div class="comp-meta"><span class="comp-record">7 Danish · 1 entries</span></div>
+    <h3>Open Mixed (with Troels Grosbøll-Poulsen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Hannibal Keblovszki <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Emil Savery <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Sven Wonsyld <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Niels Wonsyld <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Troels Trier <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Malte Thyrring <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-1248174684" open>
+  <summary>
+    <span class="player-name">Asker Hardenberg</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Women Doubles</h3>
-    <div class="comp-meta"><span class="comp-record">7 Danish · 5 entries</span></div>
+    <h3>Open Classic (with Emil Savery)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Amalie Wolff <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Julie Hallas Dreijer <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-other">Cindy Ferreira Da Fonte</span> / <span class="reg-dk">Lea Kvistgaard <span class="dk-flag">🇩🇰</span></span></li>
-<li class="reg-row"><span class="reg-dk">Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Michelle Fuchs</span></li>
-<li class="reg-row"><span class="reg-dk">Malene Veje <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Pia-Louise Claussen</span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Gerard Lop / Loïc Vacquet</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-794323815" open>
+  <summary>
+    <span class="player-name">Christian Frank</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Nations Cup - Women</h3>
-    <div class="comp-meta"><span class="comp-record">6 Danish · 1 entries</span></div>
+    <h3>Open Classic (with Peter Fjordside Rasmussen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Tamara Abdel-Aziz <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Julie Hallas Dreijer <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Lea Kvistgaard <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Malene Veje <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Amalie Wolff <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Ditte Marie Larsen <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Julien Rosset / Christophe Bonichon</td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-1540381936" open>
+  <summary>
+    <span class="player-name">David Ahrenkiel</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>ITSF League - Women</h3>
-    <div class="comp-meta"><span class="comp-record">2 Danish · 1 entries</span></div>
+    <h3>Open Mixed (with Pia-Louise Claussen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Lea Kvistgaard <span class="dk-flag">🇩🇰</span></span> / <span class="reg-dk">Amalie Wolff <span class="dk-flag">🇩🇰</span></span> / <span class="reg-other">Ecaterina Sarbulescu</span> / <span class="reg-other">Cindy Ferreira Da Fonte</span> / <span class="reg-other">Pia-Louise Claussen</span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
 
+</details>
 
+
+<details class="player-card" id="player-754939466" open>
+  <summary>
+    <span class="player-name">Ditte Marie Larsen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
 <div class="competition">
   <div class="comp-header">
-    <h3>Women O50 Singles</h3>
-    <div class="comp-meta"><span class="comp-record">1 Danish · 1 entries</span></div>
+    <h3>Open Mixed (with Jakob Kampmann)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
   </div>
-  <ul class="reg-list"><li class="reg-row"><span class="reg-dk">Anja Linneberg <span class="dk-flag">🇩🇰</span></span></li>
-</ul>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Tamara Abdel-Aziz / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
 </div>
+
+</details>
+
+
+<details class="player-card" id="player-1560056126" open>
+  <summary>
+    <span class="player-name">Emil Savery</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Asker Hardenberg)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Gerard Lop / Loïc Vacquet</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-27627612" open>
+  <summary>
+    <span class="player-name">Felix With Andreasen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Rene Petræus)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Horst Meisters / Frank Kuhtreiber</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-106953892" open>
+  <summary>
+    <span class="player-name">Gustav Severinsen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Mille Burgaard)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1506186036" open>
+  <summary>
+    <span class="player-name">Hannibal Keblovszki</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Martin Due)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Adrian Pavelescu / Alexandru Tone</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1579783884" open>
+  <summary>
+    <span class="player-name">Jakob Kampmann</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Ditte Marie Larsen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Tamara Abdel-Aziz / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1332860570" open>
+  <summary>
+    <span class="player-name">Jean Hickel</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Lasse Møller)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Farid Hemmaz / Chaouki Sakhraoui</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-424918288" open>
+  <summary>
+    <span class="player-name">Jesper Rosengaard</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Sebastian Johansson)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Christophe Delannoy / Johan Maugey</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1592823355" open>
+  <summary>
+    <span class="player-name">Julie Hallas Dreijer</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Marco Frøkjær Wejse)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Pierre Jeambrun / Constance Rousseaux</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1741902398" open>
+  <summary>
+    <span class="player-name">Karl-Emil Bruhn Poulsen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Marc Krogen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Carsten Sahner / Pietro Manzone</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1659409469" open>
+  <summary>
+    <span class="player-name">Kevin Lee Manaa</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Malene Veje)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Lea Kvistgaard / Sven Wonsyld <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1377060321" open>
+  <summary>
+    <span class="player-name">Kim Kragh</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Morten Kiilerich)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Dimitri Guillet / Richard Delrio</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-346282575" open>
+  <summary>
+    <span class="player-name">Kristian Schmidt</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Rune Lillevang)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Teddy Cotineau / Erick Hilder</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-183709252" open>
+  <summary>
+    <span class="player-name">Krisztián Bali</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Miki Tejlbo)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Axel Charron / Gwenael Grezet</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1080041692" open>
+  <summary>
+    <span class="player-name">Lars Jensen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Amalie Wolff)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Aurore Lejard / Stephan Garnier</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2086293841" open>
+  <summary>
+    <span class="player-name">Lasse Møller</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Jean Hickel)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Farid Hemmaz / Chaouki Sakhraoui</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1493469988" open>
+  <summary>
+    <span class="player-name">Lea Kvistgaard</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Sven Wonsyld)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Malene Veje / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-293841156" open>
+  <summary>
+    <span class="player-name">Louise Meilstrup</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Adam Bæk)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Clémence Penalva / Damien Willemet</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1480430537" open>
+  <summary>
+    <span class="player-name">Malene Veje</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Kevin Lee Manaa)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Lea Kvistgaard / Sven Wonsyld <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-622583590" open>
+  <summary>
+    <span class="player-name">Marc Krogen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Karl-Emil Bruhn Poulsen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Carsten Sahner / Pietro Manzone</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-759459450" open>
+  <summary>
+    <span class="player-name">Marco Frøkjær Wejse</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Julie Hallas Dreijer)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Pierre Jeambrun / Constance Rousseaux</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1111123014" open>
+  <summary>
+    <span class="player-name">Marcus Steffensen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with András Bence Tóvölgyi)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Anthony Francois / Jean-Emile Maurice</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1528332321" open>
+  <summary>
+    <span class="player-name">Martin Due</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Hannibal Keblovszki)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Adrian Pavelescu / Alexandru Tone</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2002130705" open>
+  <summary>
+    <span class="player-name">Michael Billing</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Jan-Henrik Reigardt)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Valentin Halley / Gwenaël-Ceylian Lacour</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-328168865" open>
+  <summary>
+    <span class="player-name">Miki Tejlbo</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Krisztián Bali)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Axel Charron / Gwenael Grezet</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2143389511" open>
+  <summary>
+    <span class="player-name">Mille Burgaard</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Gustav Severinsen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-659375274" open>
+  <summary>
+    <span class="player-name">Morten Kiilerich</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Kim Kragh)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Dimitri Guillet / Richard Delrio</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-721400133" open>
+  <summary>
+    <span class="player-name">Morten Mandrup Hansen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Sofie Solsø Odgaard)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Simone Russo / Tatiana Serravalle</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-116535655" open>
+  <summary>
+    <span class="player-name">Peter Fjordside Rasmussen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Christian Frank)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Julien Rosset / Christophe Bonichon</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-475168208" open>
+  <summary>
+    <span class="player-name">Peter Toubro</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Albert Nord Bjerrum)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Nevio Madeo / Jannik Fuchs</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-344091076" open>
+  <summary>
+    <span class="player-name">Rasmus Sebulonsen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Alexander Bjerre)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Stéphane Renault / Karl-William Sherlaw</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-886667185" open>
+  <summary>
+    <span class="player-name">Rene Petræus</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Felix With Andreasen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Horst Meisters / Frank Kuhtreiber</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-512186028" open>
+  <summary>
+    <span class="player-name">Rune Lillevang</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Kristian Schmidt)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Teddy Cotineau / Erick Hilder</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-854943416" open>
+  <summary>
+    <span class="player-name">Sebastian Johansson</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Jesper Rosengaard)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Christophe Delannoy / Johan Maugey</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-279336456" open>
+  <summary>
+    <span class="player-name">Sofie Solsø Odgaard</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Morten Mandrup Hansen)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Simone Russo / Tatiana Serravalle</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-923458853" open>
+  <summary>
+    <span class="player-name">Sven Wonsyld</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Lea Kvistgaard)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Malene Veje / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-215205555" open>
+  <summary>
+    <span class="player-name">Tage Miller</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Tamara Abdel-Aziz)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Ditte Marie Larsen / Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1590357200" open>
+  <summary>
+    <span class="player-name">Tamara Abdel-Aziz</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Tage Miller)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Ditte Marie Larsen / Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1543982052" open>
+  <summary>
+    <span class="player-name">Troels Grosbøll-Poulsen</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Anja Linneberg)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-792381737" open>
+  <summary>
+    <span class="player-name">Troels Trier</span>
+    <span class="player-record">0W – 0L · 0–0 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Ana Bobe)</h3>
+    <div class="comp-meta"> <span class="comp-record">0W–0L · 0–0 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result pending">…</td>
+  <td class="opponent">Sanna Wolters / Tom Droit</td>
+  <td class="score"></td>
+</tr>
+</table>
+</div>
+
+</details>
 
 
 <footer>
