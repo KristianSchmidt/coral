@@ -19,14 +19,14 @@ APP_URL = "https://app.tablesoccer.org"
 DBFF_ORG_ID = 853180033
 STREAMING_TABLES = range(1, 9)
 STREAM_URLS = {
-    1: "https://www.youtube.com/watch?v=7sws9wu6ZOs",
-    2: "https://www.youtube.com/watch?v=ESUcgmv6G8k",
-    3: "https://www.youtube.com/watch?v=4m8s5wOrxEE",
-    4: "https://www.youtube.com/watch?v=JChx-dpKezE",
-    5: "https://www.youtube.com/watch?v=p9h31oWkiEM",
-    6: "https://www.youtube.com/watch?v=rd-YuMnlZTE",
-    7: "https://www.youtube.com/watch?v=YX-RgzwKzEY",
-    8: "https://www.youtube.com/watch?v=NiuWu_Yqusk",
+    1: "https://www.youtube.com/watch?v=JV6GDceCgAM",
+    2: "https://www.youtube.com/watch?v=neN-2JdPYF8",
+    3: "https://www.youtube.com/watch?v=xMF0Igr5-fg",
+    4: "https://www.youtube.com/watch?v=WJj20Ovi9Q8",
+    5: "https://www.youtube.com/watch?v=Y7ka7d8r3Nw",
+    6: "https://www.youtube.com/watch?v=EPUV93R-eAc",
+    7: "https://www.youtube.com/watch?v=YIJUt4o-x4Y",
+    8: "https://www.youtube.com/watch?v=TGnfCdz9e4Y",
 }
 # Coral marks a match as "launched" once it is assigned to a table and started.
 # We treat "launched" as live alongside the legacy "live"/"in_progress" values.
