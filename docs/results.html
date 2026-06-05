@@ -1,0 +1,4283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🇩🇰 Finished Competitions — World Series Bonzini 2026</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --border: #2a2d3a;
+  --text: #e4e4e7;
+  --text-dim: #9ca3af;
+  --win: #22c55e;
+  --loss: #ef4444;
+  --accent: #3b82f6;
+  --rank: #f59e0b;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+header {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+header h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+header .meta {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+header .status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.summary {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.stream-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.stream-section.has-streaming {
+  border-color: var(--rank);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 24px rgba(245, 158, 11, 0.08);
+}
+.stream-section h2 {
+  font-size: 1.1rem;
+}
+.stream-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+.stream-links a, .stream-table a {
+  color: var(--rank);
+  font-weight: 700;
+  text-decoration: none;
+}
+.stream-links a {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+}
+.stream-links a:hover, .stream-table a:hover {
+  text-decoration: underline;
+}
+.stream-match-link {
+  color: inherit;
+  display: block;
+  text-decoration: none;
+}
+.stream-match-link:hover .stream-team {
+  text-decoration: underline;
+}
+.notify-button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.notify-button[disabled] {
+  cursor: default;
+  opacity: 0.65;
+}
+.stream-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border);
+}
+.stream-row:first-of-type { border-top: none; }
+.stream-table {
+  flex: 0 0 4.5rem;
+  color: var(--rank);
+  font-weight: 700;
+}
+.stream-comp {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+.stream-team.dk {
+  color: var(--rank);
+  font-weight: 700;
+}
+.versus, .stream-score, .stream-empty {
+  color: var(--text-dim);
+}
+.stream-score {
+  margin-left: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+.player-card > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+.player-card > summary::-webkit-details-marker { display: none; }
+.player-card > summary::before {
+  content: '▶';
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+}
+.player-card[open] > summary::before { transform: rotate(90deg); }
+.player-name { font-weight: 600; font-size: 1.05rem; }
+.player-record { color: var(--text-dim); font-size: 0.85rem; white-space: nowrap; }
+.competition {
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.comp-header h3 { font-size: 0.95rem; font-weight: 500; color: var(--accent); }
+.comp-meta { font-size: 0.8rem; color: var(--text-dim); display: flex; gap: 0.5rem; align-items: baseline; }
+.rank {
+  background: var(--rank);
+  color: #000;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.comp-record { white-space: nowrap; }
+table.matches {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+table.matches td { padding: 0.25rem 0.4rem; }
+.phase-header td {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  padding-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.round { color: var(--text-dim); width: 5rem; white-space: nowrap; }
+.result { width: 2rem; text-align: center; font-weight: 700; border-radius: 3px; }
+.result.win { color: var(--win); }
+.result.loss { color: var(--loss); }
+.result.pending { color: var(--text-dim); }
+.opponent { }
+.score { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
+.dk-flag { font-size: 0.75rem; }
+.forfeit { font-size: 0.7rem; color: var(--text-dim); font-style: italic; }
+.qual-fold {
+  margin: 0.25rem 0;
+}
+.qual-fold > summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  padding: 0.25rem 0;
+  user-select: none;
+}
+.qual-fold > summary:hover {
+  color: var(--text);
+}
+.qual-fold table.matches {
+  margin-top: 0.25rem;
+}
+.active-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.active-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+.active-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.3rem 0;
+}
+a.active-name {
+  font-weight: 600;
+  min-width: 10rem;
+  margin-right: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
+}
+a.active-name:hover {
+  color: var(--accent);
+}
+.active-pair {
+  display: inline-flex;
+  align-items: stretch;
+  white-space: nowrap;
+}
+.round-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px 0 0 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-right: 0;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+}
+.active-comp {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.active-pair .active-comp {
+  border-radius: 0 999px 999px 0;
+}
+.active-comp.playing {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid var(--win);
+  color: var(--win);
+}
+.active-comp.live {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--loss);
+  color: var(--loss);
+  font-weight: 600;
+}
+.active-comp.waiting {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid var(--rank);
+  color: var(--rank);
+}
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+.player-jump {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.player-jump select {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+}
+.player-jump select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.generated {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+@media (max-width: 600px) {
+  body { padding: 0.5rem; }
+  .comp-header { flex-direction: column; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
+  .stream-row { flex-direction: column; gap: 0.25rem; }
+  .stream-table { flex-basis: auto; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🇩🇰 Danish Players — Finished Competitions</h1>
+  <div class="meta">World Series Bonzini 2026 · 2026-06-04 — 2026-06-07</div>
+  <div class="status">Playing</div>
+  <div class="generated">Report generated at 2026-06-05 10:21 CEST</div>
+</header>
+
+<div class="summary">
+  <span>50 Danish players tracked</span>
+  <span><a href="index.html">← Back to live report</a></span>
+  <span><a href="https://app.tablesoccer.org/p/7L5JM6" target="_blank">View on Coral ↗</a></span>
+</div>
+
+<div class="player-jump">
+  <select onchange="if(this.value)location.hash=this.value;this.selectedIndex=0;">
+    <option value="">Jump to player…</option>
+    <option value="#player-1590357200">Abdel-Aziz, Tamara</option>
+    <option value="#player-1540381936">Ahrenkiel, David</option>
+    <option value="#player-27627612">Andreasen, Felix With</option>
+    <option value="#player-183709252">Bali, Krisztián</option>
+    <option value="#player-2002130705">Billing, Michael</option>
+    <option value="#player-1080379575">Bjerre, Alexander</option>
+    <option value="#player-281755549">Bjerrum, Albert Nord</option>
+    <option value="#player-2143389511">Burgaard, Mille</option>
+    <option value="#player-1920850118">Bæk, Adam</option>
+    <option value="#player-1592823355">Dreijer, Julie Hallas</option>
+    <option value="#player-1528332321">Due, Martin</option>
+    <option value="#player-794323815">Frank, Christian</option>
+    <option value="#player-1543982052">Grosbøll-Poulsen, Troels</option>
+    <option value="#player-721400133">Hansen, Morten Mandrup</option>
+    <option value="#player-1248174684">Hardenberg, Asker</option>
+    <option value="#player-1332860570">Hickel, Jean</option>
+    <option value="#player-1080041692">Jensen, Lars</option>
+    <option value="#player-854943416">Johansson, Sebastian</option>
+    <option value="#player-1579783884">Kampmann, Jakob</option>
+    <option value="#player-1506186036">Keblovszki, Hannibal</option>
+    <option value="#player-659375274">Kiilerich, Morten</option>
+    <option value="#player-1377060321">Kragh, Kim</option>
+    <option value="#player-622583590">Krogen, Marc</option>
+    <option value="#player-1493469988">Kvistgaard, Lea</option>
+    <option value="#player-754939466">Larsen, Ditte Marie</option>
+    <option value="#player-512186028">Lillevang, Rune</option>
+    <option value="#player-858812793">Linneberg, Anja</option>
+    <option value="#player-1659409469">Manaa, Kevin Lee</option>
+    <option value="#player-293841156">Meilstrup, Louise</option>
+    <option value="#player-215205555">Miller, Tage</option>
+    <option value="#player-2086293841">Møller, Lasse</option>
+    <option value="#player-279336456">Odgaard, Sofie Solsø</option>
+    <option value="#player-886667185">Petræus, Rene</option>
+    <option value="#player-1741902398">Poulsen, Karl-Emil Bruhn</option>
+    <option value="#player-116535655">Rasmussen, Peter Fjordside</option>
+    <option value="#player-424918288">Rosengaard, Jesper</option>
+    <option value="#player-1560056126">Savery, Emil</option>
+    <option value="#player-346282575">Schmidt, Kristian</option>
+    <option value="#player-344091076">Sebulonsen, Rasmus</option>
+    <option value="#player-106953892">Severinsen, Gustav</option>
+    <option value="#player-1111123014">Steffensen, Marcus</option>
+    <option value="#player-328168865">Tejlbo, Miki</option>
+    <option value="#player-475168208">Toubro, Peter</option>
+    <option value="#player-792381737">Trier, Troels</option>
+    <option value="#player-532332117">Tóvölgyi, András Bence</option>
+    <option value="#player-1480430537">Veje, Malene</option>
+    <option value="#player-759459450">Wejse, Marco Frøkjær</option>
+    <option value="#player-330634888">Wolff, Amalie</option>
+    <option value="#player-824105510">Wonsyld, Niels</option>
+    <option value="#player-923458853">Wonsyld, Sven</option>
+  </select>
+</div>
+
+
+
+
+
+
+<details class="player-card" id="player-1506186036" open>
+  <summary>
+    <span class="player-name">Hannibal Keblovszki</span>
+    <span class="player-record">10W – 1L · 17–3 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Martin Due)</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">10W–1L · 17–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Adrian Pavelescu / Alexandru Tone</td>
+  <td class="score">8-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">François Mesili / Jean-Marie Euzenat</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kevin Moreau / Jonathan Teixeira</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Fao Merene / Kacem Bessam</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lucas De Jesus / Jôao De Jesus</td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Amran Maloum / Fodhil Lourci</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Monir Batti / Julien Pierron</td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Krogen / Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gabor Czako / Karim El Hamdioui</td>
+  <td class="score">0-5 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Fritsch / Thomas Kroll</td>
+  <td class="score">5-3 5-0</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Bruno Goncalves / Fabio Ferreira</td>
+  <td class="score">5-1 4-5 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1528332321" open>
+  <summary>
+    <span class="player-name">Martin Due</span>
+    <span class="player-record">10W – 1L · 17–3 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Hannibal Keblovszki)</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">10W–1L · 17–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Adrian Pavelescu / Alexandru Tone</td>
+  <td class="score">8-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">François Mesili / Jean-Marie Euzenat</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Kevin Moreau / Jonathan Teixeira</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Fao Merene / Kacem Bessam</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Lucas De Jesus / Jôao De Jesus</td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Amran Maloum / Fodhil Lourci</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Monir Batti / Julien Pierron</td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Krogen / Karl-Emil Bruhn Poulsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gabor Czako / Karim El Hamdioui</td>
+  <td class="score">0-5 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Fritsch / Thomas Kroll</td>
+  <td class="score">5-3 5-0</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Bruno Goncalves / Fabio Ferreira</td>
+  <td class="score">5-1 4-5 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1493469988" open>
+  <summary>
+    <span class="player-name">Lea Kvistgaard</span>
+    <span class="player-record">8W – 3L · 24–13 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Sven Wonsyld)</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">8W–2L · 23–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Florian Ledoux / Méline Bachelier</td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mitch Eerens / Amber Starren</td>
+  <td class="score">4-5 5-1 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Elie Salame / Caroline Osmont</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score">5-4 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anne Humbert / Axel Berlemont</td>
+  <td class="score">4-5 5-4 3-5 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Vandenabeele / Malika Senouci</td>
+  <td class="score">5-4 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Samantha Di Paolo / Steve Dias</td>
+  <td class="score">3-5 4-5 5-4 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ilana Robin / Adam Tourmente</td>
+  <td class="score">4-5 5-3 4-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michaela Klass / Raphael Hampel</td>
+  <td class="score">5-3 4-5 5-3 3-5 6-4</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Nations Cup - Women (with Tamara Abdel-Aziz / Julie Hallas Dreijer / Malene Veje / Amalie Wolff / Ditte Marie Larsen)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ekaterina Atanasova / Blagovesta Hoffmann / Svetlana Zhechkova / Yanitsa Zhecheva</td>
+  <td class="score">10-0 19-20 27-30</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-293841156" open>
+  <summary>
+    <span class="player-name">Louise Meilstrup</span>
+    <span class="player-record">8W – 4L · 19–15 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Adam Bæk)</h3>
+    <div class="comp-meta"><span class="rank">49th</span> <span class="comp-record">2W–3L · 6–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Clémence Penalva / Damien Willemet</td>
+  <td class="score">0-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Benjamin Vandenabeele / Malika Senouci</td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Aurore Lejard / Stephan Garnier</td>
+  <td class="score">5-1 3-5 5-0</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gurvan Jehanno / Evie Bouteloup</td>
+  <td class="score">2-5 5-2 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Aude Dabencourt / Joaquim Pinheiro</td>
+  <td class="score">4-5 4-5 5-4 5-4 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Daniel Kelovic)</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">6W–1L · 13–6 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Olivier Soudry / Elouan Audebrand</td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Franck Vernetti / Erick Hilder</td>
+  <td class="score">4-5 5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jean-Marc Guimard / Marc Bury</td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Axel Berlemont / Jensey Vanderbeken</td>
+  <td class="score">5-1 1-5 6-4</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Robert Zamora / Margaux Engels</td>
+  <td class="score">5-1 4-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Thomas Delacourt / Christophe Bonichon</td>
+  <td class="score">4-5 5-3 3-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Richard Delrio / Benjamin Rekut</td>
+  <td class="score">5-1 3-5 5-3</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-622583590" open>
+  <summary>
+    <span class="player-name">Marc Krogen</span>
+    <span class="player-record">8W – 3L · 14–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Karl-Emil Bruhn Poulsen)</h3>
+    <div class="comp-meta"><span class="rank">14th</span> <span class="comp-record">6W–2L · 9–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Carsten Sahner / Pietro Manzone</td>
+  <td class="score">8-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Julien Rosset / Christophe Bonichon</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Farid Ouahnache / Julien Cadet</td>
+  <td class="score">6-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Franck Vernetti / Emmanuel Lalande</td>
+  <td class="score">8-0</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pierrick Champagnat / Christophe Henriques</td>
+  <td class="score">5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Combaut / Samy Khatal</td>
+  <td class="score">4-5 5-2 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gilbert Dacunha / Paul De Sousa Carvalho</td>
+  <td class="score">5-3 0-5 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki / Martin Due <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with François Valoi)</h3>
+    <div class="comp-meta"><span class="rank">42nd</span> <span class="comp-record">2W–1L · 5–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexis Denis / Adrian Pavelescu</td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Charly Mercier / Alexandra Caillet</td>
+  <td class="score">2-5 5-2 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Axel Berlemont / Jensey Vanderbeken</td>
+  <td class="score">4-5 5-4 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-923458853" open>
+  <summary>
+    <span class="player-name">Sven Wonsyld</span>
+    <span class="player-record">8W – 2L · 23–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Lea Kvistgaard)</h3>
+    <div class="comp-meta"><span class="rank">3rd</span> <span class="comp-record">8W–2L · 23–11 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Malene Veje / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Florian Ledoux / Méline Bachelier</td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mitch Eerens / Amber Starren</td>
+  <td class="score">4-5 5-1 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Elie Salame / Caroline Osmont</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score">5-4 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Anne Humbert / Axel Berlemont</td>
+  <td class="score">4-5 5-4 3-5 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Vandenabeele / Malika Senouci</td>
+  <td class="score">5-4 5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Samantha Di Paolo / Steve Dias</td>
+  <td class="score">3-5 4-5 5-4 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ilana Robin / Adam Tourmente</td>
+  <td class="score">4-5 5-3 4-5 2-5</td>
+</tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michaela Klass / Raphael Hampel</td>
+  <td class="score">5-3 4-5 5-3 3-5 6-4</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-281755549" open>
+  <summary>
+    <span class="player-name">Albert Nord Bjerrum</span>
+    <span class="player-record">7W – 3L · 13–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Peter Toubro)</h3>
+    <div class="comp-meta"><span class="rank">37th</span> <span class="comp-record">3W–2L · 4–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nevio Madeo / Jannik Fuchs</td>
+  <td class="score">8-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Valentin Barbazo / Noé Ensarguet</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean Hickel / Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexis Joube / Jeremy Nerat</td>
+  <td class="score">8-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Marc Guimard / Sylvain Tremolet</td>
+  <td class="score">3-5 5-3 4-6</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Dorian Remont)</h3>
+    <div class="comp-meta"><span class="rank">10th</span> <span class="comp-record">4W–1L · 9–4 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Michael Billing / Emeric Jacquot <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 5-1</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">François Bougeard / Florian Cerisier</td>
+  <td class="score">5-4 4-5 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Vandenabeele / Farid Lamara</td>
+  <td class="score">4-5 5-4 7-5</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Stephanie Silva Loyola / Julien Eveillard</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Kevin Grange / Daniela Gerhardt</td>
+  <td class="score">5-3 3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1540381936" open>
+  <summary>
+    <span class="player-name">David Ahrenkiel</span>
+    <span class="player-record">6W – 5L · 16–12 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Pia-Louise Claussen)</h3>
+    <div class="comp-meta"><span class="rank">2nd</span> <span class="comp-record">4W–4L · 11–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Elie Salame / Caroline Osmont</td>
+  <td class="score">4-5 5-2 4-6</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Valentina Marin / Stefanut-Alexandru Jianu</td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score">5-3 4-5 7-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Julie Hallas Dreijer / Marco Frøkjær Wejse <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Semifinal</td>
+  <td class="result win">W</td>
+  <td class="opponent">Daniel Görlich / Kathrin Raab</td>
+  <td class="score">5-4 5-3</td>
+</tr>
+<tr>
+  <td class="round">Final</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Stephanie Silva Loyola / Stefan Stamerra</td>
+  <td class="score">4-5 5-2 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with David Chicheportiche)</h3>
+    <div class="comp-meta"><span class="rank">58th</span> <span class="comp-record">2W–1L · 5–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Cyril Abecassis / Rémy Jorre</td>
+  <td class="score">2-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mariano Federico / Chaouki Sakhraoui</td>
+  <td class="score">5-2 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Steve Guepin / Jérome Brunois</td>
+  <td class="score">5-2 0-5 7-8</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1332860570" open>
+  <summary>
+    <span class="player-name">Jean Hickel</span>
+    <span class="player-record">6W – 2L · 10–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Lasse Møller)</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">6W–2L · 10–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Farid Hemmaz / Chaouki Sakhraoui</td>
+  <td class="score">8-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Julien Rodriguez / Eric Benjamin</td>
+  <td class="score">8-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Albert Nord Bjerrum / Peter Toubro <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Laurent Nemery / Nelson Da Rocha</td>
+  <td class="score">5-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Oestreicher / Eric Jacquot</td>
+  <td class="score">4-5 5-2 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Christophe Delannoy / Johan Maugey</td>
+  <td class="score">4-5 5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Ulf Gabriel / Emmanuel Sichere</td>
+  <td class="score">4-5 5-4 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Omar Benbakika / Lucas Lupi</td>
+  <td class="score">3-5 5-3 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1741902398" open>
+  <summary>
+    <span class="player-name">Karl-Emil Bruhn Poulsen</span>
+    <span class="player-record">6W – 3L · 10–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Marc Krogen)</h3>
+    <div class="comp-meta"><span class="rank">14th</span> <span class="comp-record">6W–2L · 9–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Carsten Sahner / Pietro Manzone</td>
+  <td class="score">8-1</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Julien Rosset / Christophe Bonichon</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Farid Ouahnache / Julien Cadet</td>
+  <td class="score">6-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Franck Vernetti / Emmanuel Lalande</td>
+  <td class="score">8-0</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pierrick Champagnat / Christophe Henriques</td>
+  <td class="score">5-1 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Combaut / Samy Khatal</td>
+  <td class="score">4-5 5-2 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gilbert Dacunha / Paul De Sousa Carvalho</td>
+  <td class="score">5-3 0-5 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Hannibal Keblovszki / Martin Due <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Viet Anh Tran)</h3>
+    <div class="comp-meta"><span class="rank">136th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Michel Ghirardi / Giovanni Manzone</td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2086293841" open>
+  <summary>
+    <span class="player-name">Lasse Møller</span>
+    <span class="player-record">6W – 2L · 10–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Jean Hickel)</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">6W–2L · 10–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Farid Hemmaz / Chaouki Sakhraoui</td>
+  <td class="score">8-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Julien Rodriguez / Eric Benjamin</td>
+  <td class="score">8-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Albert Nord Bjerrum / Peter Toubro <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Laurent Nemery / Nelson Da Rocha</td>
+  <td class="score">5-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Oestreicher / Eric Jacquot</td>
+  <td class="score">4-5 5-2 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Christophe Delannoy / Johan Maugey</td>
+  <td class="score">4-5 5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Ulf Gabriel / Emmanuel Sichere</td>
+  <td class="score">4-5 5-4 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Omar Benbakika / Lucas Lupi</td>
+  <td class="score">3-5 5-3 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-854943416" open>
+  <summary>
+    <span class="player-name">Sebastian Johansson</span>
+    <span class="player-record">6W – 3L · 10–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Jesper Rosengaard)</h3>
+    <div class="comp-meta"><span class="rank">44th</span> <span class="comp-record">4W–2L · 6–4 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Christophe Delannoy / Johan Maugey</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sébastien Toutain / Nicolas Lesale</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Victor Villaverde / Vincent Rousset</td>
+  <td class="score">2-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jean-Philippe Villion / Romain Brunois</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Ryan Mouilhac / Lorenzo Guepin</td>
+  <td class="score">3-5 5-1 7-5</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frédéric Travers / Paul Nunes</td>
+  <td class="score">5-2 3-5 4-6</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Tamara Stoute)</h3>
+    <div class="comp-meta"><span class="rank">63rd</span> <span class="comp-record">2W–1L · 4–4 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Julien Morais / Pietro Manzone</td>
+  <td class="score">5-2 3-5 6-4</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Farid Hemmaz / Christophe Henriques</td>
+  <td class="score">2-5 5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Luc Brevet / Jules Vannier</td>
+  <td class="score">1-5 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1111123014" open>
+  <summary>
+    <span class="player-name">Marcus Steffensen</span>
+    <span class="player-record">5W – 5L · 10–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with András Bence Tóvölgyi)</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">4W–4L · 8–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anthony Francois / Jean-Emile Maurice</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Felix With Andreasen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ulf Gabriel / Emmanuel Sichere</td>
+  <td class="score">6-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Gilbert Dacunha / Paul De Sousa Carvalho</td>
+  <td class="score">5-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hamid Bassam / Maxime Senot</td>
+  <td class="score">5-4 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marvin Savanxayadeth / Théo Dumetz</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sylvain Neveu / Laurent Levacher</td>
+  <td class="score">2-5 5-1 5-0</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anthony Francois / Jean-Emile Maurice</td>
+  <td class="score">5-3 3-5 6-8</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Samy Khatal)</h3>
+    <div class="comp-meta"><span class="rank">122nd</span> <span class="comp-record">1W–1L · 2–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Cédric Rollo / Marc Sanchez</td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Teddy Cotineau / Baptiste Bourgeaux</td>
+  <td class="score">3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-279336456" open>
+  <summary>
+    <span class="player-name">Sofie Solsø Odgaard</span>
+    <span class="player-record">5W – 3L · 11–9 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Morten Mandrup Hansen)</h3>
+    <div class="comp-meta"><span class="rank">27th</span> <span class="comp-record">3W–2L · 7–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Simone Russo / Tatiana Serravalle</td>
+  <td class="score">5-1 4-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franco Lupusella / Daniela Gerhardt</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Abeer Salameh / David Ziemann</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Charline Demlenne / Daniel Kelovic</td>
+  <td class="score">3-5 5-4 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Elie Salame / Caroline Osmont</td>
+  <td class="score">4-5 5-0 3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Jean-Baptiste Prystajko)</h3>
+    <div class="comp-meta"><span class="rank">46th</span> <span class="comp-record">2W–1L · 4–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Laurent Bateau / Peter Fjordside Rasmussen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Cyril Jegu / Clara Lemoine</td>
+  <td class="score">5-2 5-1</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Semin Mensah / Valentin Grandys</td>
+  <td class="score">2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1080379575" open>
+  <summary>
+    <span class="player-name">Alexander Bjerre</span>
+    <span class="player-record">4W – 3L · 6–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Rasmus Sebulonsen)</h3>
+    <div class="comp-meta"><span class="rank">46th</span> <span class="comp-record">4W–2L · 5–4 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Stéphane Renault / Karl-William Sherlaw</td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franck Vernetti / Emmanuel Lalande</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Eric Dominault / Said Laroussi</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Germain Tran / Benoît Houzelle</td>
+  <td class="score">8-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sebastien Colson / Julien Scarron</td>
+  <td class="score">5-0 1-5 5-0</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ricardo Rodrigues Pinto / Ivan Rodrigues</td>
+  <td class="score">3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Bianca Plas Van Der)</h3>
+    <div class="comp-meta"><span class="rank">208th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emmanuel Broutin / Alexandru Ilie</td>
+  <td class="score">3-5 5-4 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-330634888" open>
+  <summary>
+    <span class="player-name">Amalie Wolff</span>
+    <span class="player-record">4W – 3L · 12–10 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Lars Jensen)</h3>
+    <div class="comp-meta"><span class="rank">24th</span> <span class="comp-record">4W–2L · 11–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Aurore Lejard / Stephan Garnier</td>
+  <td class="score">5-0 2-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Franck Mahy / Sandrine Feray</td>
+  <td class="score">2-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Samantha Di Paolo / Steve Dias</td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Carlos Ribeiro / Lou Roumagnac</td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Aurélien Le Godec / Beatrice Berner</td>
+  <td class="score">4-5 5-3 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mitch Eerens / Amber Starren</td>
+  <td class="score">3-5 3-5 5-3 5-3 1-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Nations Cup - Women (with Tamara Abdel-Aziz / Julie Hallas Dreijer / Lea Kvistgaard / Malene Veje / Ditte Marie Larsen)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ekaterina Atanasova / Blagovesta Hoffmann / Svetlana Zhechkova / Yanitsa Zhecheva</td>
+  <td class="score">10-0 19-20 27-30</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-532332117" open>
+  <summary>
+    <span class="player-name">András Bence Tóvölgyi</span>
+    <span class="player-record">4W – 5L · 8–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Marcus Steffensen)</h3>
+    <div class="comp-meta"><span class="rank">6th</span> <span class="comp-record">4W–4L · 8–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anthony Francois / Jean-Emile Maurice</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rene Petræus / Felix With Andreasen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ulf Gabriel / Emmanuel Sichere</td>
+  <td class="score">6-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Gilbert Dacunha / Paul De Sousa Carvalho</td>
+  <td class="score">5-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Hamid Bassam / Maxime Senot</td>
+  <td class="score">5-4 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marvin Savanxayadeth / Théo Dumetz</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sylvain Neveu / Laurent Levacher</td>
+  <td class="score">2-5 5-1 5-0</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anthony Francois / Jean-Emile Maurice</td>
+  <td class="score">5-3 3-5 6-8</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Laurent Vollais)</h3>
+    <div class="comp-meta"><span class="rank">188th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Thomas Delacourt / Christophe Bonichon</td>
+  <td class="score">2-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-424918288" open>
+  <summary>
+    <span class="player-name">Jesper Rosengaard</span>
+    <span class="player-record">4W – 3L · 6–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Sebastian Johansson)</h3>
+    <div class="comp-meta"><span class="rank">44th</span> <span class="comp-record">4W–2L · 6–4 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Christophe Delannoy / Johan Maugey</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sébastien Toutain / Nicolas Lesale</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Victor Villaverde / Vincent Rousset</td>
+  <td class="score">2-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jean-Philippe Villion / Romain Brunois</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Ryan Mouilhac / Lorenzo Guepin</td>
+  <td class="score">3-5 5-1 7-5</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frédéric Travers / Paul Nunes</td>
+  <td class="score">5-2 3-5 4-6</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Carole Lavenant)</h3>
+    <div class="comp-meta"><span class="rank">174th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emmanuel Sichere / Carsten Sahner</td>
+  <td class="score">3-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1659409469" open>
+  <summary>
+    <span class="player-name">Kevin Lee Manaa</span>
+    <span class="player-record">4W – 2L · 10–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Malene Veje)</h3>
+    <div class="comp-meta"><span class="rank">23rd</span> <span class="comp-record">4W–2L · 10–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lea Kvistgaard / Sven Wonsyld <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Vandenabeele / Malika Senouci</td>
+  <td class="score">5-4 4-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Florian Ledoux / Méline Bachelier</td>
+  <td class="score">4-5 5-2 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Valentina Marin / Stefanut-Alexandru Jianu</td>
+  <td class="score">5-3 5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">François Cheuret / Anais Noel</td>
+  <td class="score">2-5 3-5 5-1 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1080041692" open>
+  <summary>
+    <span class="player-name">Lars Jensen</span>
+    <span class="player-record">4W – 2L · 11–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Amalie Wolff)</h3>
+    <div class="comp-meta"><span class="rank">24th</span> <span class="comp-record">4W–2L · 11–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Aurore Lejard / Stephan Garnier</td>
+  <td class="score">5-0 2-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Franck Mahy / Sandrine Feray</td>
+  <td class="score">2-5 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Samantha Di Paolo / Steve Dias</td>
+  <td class="score">4-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Carlos Ribeiro / Lou Roumagnac</td>
+  <td class="score">5-2 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Aurélien Le Godec / Beatrice Berner</td>
+  <td class="score">4-5 5-3 5-3 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mitch Eerens / Amber Starren</td>
+  <td class="score">3-5 3-5 5-3 5-3 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1480430537" open>
+  <summary>
+    <span class="player-name">Malene Veje</span>
+    <span class="player-record">4W – 3L · 11–9 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Kevin Lee Manaa)</h3>
+    <div class="comp-meta"><span class="rank">23rd</span> <span class="comp-record">4W–2L · 10–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Lea Kvistgaard / Sven Wonsyld <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-0 5-2</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Benjamin Vandenabeele / Malika Senouci</td>
+  <td class="score">5-4 4-5 5-1</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Florian Ledoux / Méline Bachelier</td>
+  <td class="score">4-5 5-2 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Valentina Marin / Stefanut-Alexandru Jianu</td>
+  <td class="score">5-3 5-1 5-1</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">François Cheuret / Anais Noel</td>
+  <td class="score">2-5 3-5 5-1 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Nations Cup - Women (with Tamara Abdel-Aziz / Julie Hallas Dreijer / Lea Kvistgaard / Amalie Wolff / Ditte Marie Larsen)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ekaterina Atanasova / Blagovesta Hoffmann / Svetlana Zhechkova / Yanitsa Zhecheva</td>
+  <td class="score">10-0 19-20 27-30</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-721400133" open>
+  <summary>
+    <span class="player-name">Morten Mandrup Hansen</span>
+    <span class="player-record">4W – 3L · 9–10 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Sofie Solsø Odgaard)</h3>
+    <div class="comp-meta"><span class="rank">27th</span> <span class="comp-record">3W–2L · 7–7 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Simone Russo / Tatiana Serravalle</td>
+  <td class="score">5-1 4-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franco Lupusella / Daniela Gerhardt</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Abeer Salameh / David Ziemann</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Charline Demlenne / Daniel Kelovic</td>
+  <td class="score">3-5 5-4 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Elie Salame / Caroline Osmont</td>
+  <td class="score">4-5 5-0 3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Brice Briot)</h3>
+    <div class="comp-meta"><span class="rank">123rd</span> <span class="comp-record">1W–1L · 2–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Xavier Villechenoux / Alexandru Tone</td>
+  <td class="score">5-4 4-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Marc Guimard / Marc Bury</td>
+  <td class="score">1-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-344091076" open>
+  <summary>
+    <span class="player-name">Rasmus Sebulonsen</span>
+    <span class="player-record">4W – 3L · 5–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Alexander Bjerre)</h3>
+    <div class="comp-meta"><span class="rank">46th</span> <span class="comp-record">4W–2L · 5–4 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Stéphane Renault / Karl-William Sherlaw</td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franck Vernetti / Emmanuel Lalande</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Eric Dominault / Said Laroussi</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Germain Tran / Benoît Houzelle</td>
+  <td class="score">8-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sebastien Colson / Julien Scarron</td>
+  <td class="score">5-0 1-5 5-0</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ricardo Rodrigues Pinto / Ivan Rodrigues</td>
+  <td class="score">3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Jérémie Priol)</h3>
+    <div class="comp-meta"><span class="rank">199th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Thierry Cazenave / Alessandro Manzone</td>
+  <td class="score">2-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-792381737" open>
+  <summary>
+    <span class="player-name">Troels Trier</span>
+    <span class="player-record">4W – 1L · 10–5 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Ana Bobe)</h3>
+    <div class="comp-meta"><span class="rank">8th</span> <span class="comp-record">4W–1L · 10–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sanna Wolters / Tom Droit</td>
+  <td class="score">5-4 5-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pierre Jeambrun / Constance Rousseaux</td>
+  <td class="score">5-4 5-1</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexia Depagne / Julien Eveillard</td>
+  <td class="score">5-3 4-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Baptiste Bourgeaux / Valentine Langlois</td>
+  <td class="score">1-5 5-4 5-1</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexia Depagne / Julien Eveillard</td>
+  <td class="score">4-5 5-4 5-4 4-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1248174684" open>
+  <summary>
+    <span class="player-name">Asker Hardenberg</span>
+    <span class="player-record">3W – 3L · 5–5 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Emil Savery)</h3>
+    <div class="comp-meta"><span class="rank">48th</span> <span class="comp-record">3W–2L · 4–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gerard Lop / Loïc Vacquet</td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Datta Ramadasan / Christophe Robert</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rudy Scaya / Alexandre Ambel</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Arnaud Denivet / Quentin Dingival</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Cyril Jegu / Lionel Martinez</td>
+  <td class="score">5-4 2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Jean-Michel Piraudon)</h3>
+    <div class="comp-meta"><span class="rank">144th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Farid Hemmaz / Christophe Henriques</td>
+  <td class="score">2-5 5-2 4-6</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1560056126" open>
+  <summary>
+    <span class="player-name">Emil Savery</span>
+    <span class="player-record">3W – 2L · 4–3 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Asker Hardenberg)</h3>
+    <div class="comp-meta"><span class="rank">48th</span> <span class="comp-record">3W–2L · 4–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gerard Lop / Loïc Vacquet</td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Datta Ramadasan / Christophe Robert</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rudy Scaya / Alexandre Ambel</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Arnaud Denivet / Quentin Dingival</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Cyril Jegu / Lionel Martinez</td>
+  <td class="score">5-4 2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-106953892" open>
+  <summary>
+    <span class="player-name">Gustav Severinsen</span>
+    <span class="player-record">3W – 4L · 7–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Mille Burgaard)</h3>
+    <div class="comp-meta"><span class="rank">8th</span> <span class="comp-record">3W–4L · 7–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tonino Schmitz / Michelle Fuchs</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Adina-Larisa Costache / Alin-Cosmin Pojar</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Abeer Salameh / David Ziemann</td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1579783884" open>
+  <summary>
+    <span class="player-name">Jakob Kampmann</span>
+    <span class="player-record">3W – 5L · 6–12 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Ditte Marie Larsen)</h3>
+    <div class="comp-meta"><span class="rank">14th</span> <span class="comp-record">2W–4L · 4–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nick Poroshyn / Alina Pipko</td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franck Mahy / Sandrine Feray</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Leo Gomes / Camille Lucot</td>
+  <td class="score">1-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tonino Schmitz / Michelle Fuchs</td>
+  <td class="score">5-0 2-5 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Kunath / Sabrina Sachau</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Laurent Dunckhorst)</h3>
+    <div class="comp-meta"><span class="rank">96th</span> <span class="comp-record">1W–1L · 2–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Xavier Claverie / Caroline Gomez</td>
+  <td class="score">5-0 3-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Semin Mensah / Valentin Grandys</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2002130705" open>
+  <summary>
+    <span class="player-name">Michael Billing</span>
+    <span class="player-record">3W – 3L · 4–5 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Jan-Henrik Reigardt)</h3>
+    <div class="comp-meta"><span class="rank">41st</span> <span class="comp-record">3W–2L · 4–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Valentin Halley / Gwenaël-Ceylian Lacour</td>
+  <td class="score">8-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Pierrick Champagnat / Christophe Henriques</td>
+  <td class="score">8-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Horst Meisters / Frank Kuhtreiber</td>
+  <td class="score">8-6</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Datta Ramadasan / Christophe Robert</td>
+  <td class="score">3-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Simon Hemi / Mael Guyomarch</td>
+  <td class="score">5-3 4-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Emeric Jacquot)</h3>
+    <div class="comp-meta"><span class="rank">243rd</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Dorian Remont / Albert Nord Bjerrum <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">2-5 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-2143389511" open>
+  <summary>
+    <span class="player-name">Mille Burgaard</span>
+    <span class="player-record">3W – 4L · 7–8 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Gustav Severinsen)</h3>
+    <div class="comp-meta"><span class="rank">8th</span> <span class="comp-record">3W–4L · 7–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">1-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Malene Veje / Kevin Lee Manaa <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">0-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tonino Schmitz / Michelle Fuchs</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-4 4-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Adina-Larisa Costache / Alin-Cosmin Pojar</td>
+  <td class="score">5-2 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Abeer Salameh / David Ziemann</td>
+  <td class="score">5-3 5-1</td>
+</tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-659375274" open>
+  <summary>
+    <span class="player-name">Morten Kiilerich</span>
+    <span class="player-record">3W – 5L · 5–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Kim Kragh)</h3>
+    <div class="comp-meta"><span class="rank">18th</span> <span class="comp-record">1W–4L · 1–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Dimitri Guillet / Richard Delrio</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anthony Neau / Damien Ledoux</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Stéfan Francoïa / Jérémy Ansermoz</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexis Hyerle / Romain Tracol</td>
+  <td class="score">6-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jérémie Priol / Viet Anh Tran</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Paul Soula)</h3>
+    <div class="comp-meta"><span class="rank">59th</span> <span class="comp-record">2W–1L · 4–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tonino Schmitz / Ruben Abehsera</td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Olivier Crochard / Idir Tagzout</td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Sarrazin / Loïc Vacquet</td>
+  <td class="score">2-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-824105510" open>
+  <summary>
+    <span class="player-name">Niels Wonsyld</span>
+    <span class="player-record">3W – 1L · 7–3 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Gaël Lagrange)</h3>
+    <div class="comp-meta"><span class="rank">7th</span> <span class="comp-record">3W–1L · 7–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexis Ricordel / Marc Bury</td>
+  <td class="score">5-4 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gabriel Tusevski / Idir Tagzout</td>
+  <td class="score">5-3 4-5 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Romain Jaquet / Jean-Christophe Pele</td>
+  <td class="score">5-2 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Frédéric Travers / Paul Nunes</td>
+  <td class="score">2-5 5-1 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-475168208" open>
+  <summary>
+    <span class="player-name">Peter Toubro</span>
+    <span class="player-record">3W – 3L · 4–5 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Albert Nord Bjerrum)</h3>
+    <div class="comp-meta"><span class="rank">37th</span> <span class="comp-record">3W–2L · 4–3 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nevio Madeo / Jannik Fuchs</td>
+  <td class="score">8-3</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Valentin Barbazo / Noé Ensarguet</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean Hickel / Lasse Møller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Alexis Joube / Jeremy Nerat</td>
+  <td class="score">8-4</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Marc Guimard / Sylvain Tremolet</td>
+  <td class="score">3-5 5-3 4-6</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Maxime Senot)</h3>
+    <div class="comp-meta"><span class="rank">175th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mariano Federico / Chaouki Sakhraoui</td>
+  <td class="score">3-5 4-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1920850118" open>
+  <summary>
+    <span class="player-name">Adam Bæk</span>
+    <span class="player-record">2W – 3L · 6–9 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Louise Meilstrup)</h3>
+    <div class="comp-meta"><span class="rank">49th</span> <span class="comp-record">2W–3L · 6–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Clémence Penalva / Damien Willemet</td>
+  <td class="score">0-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Benjamin Vandenabeele / Malika Senouci</td>
+  <td class="score">4-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Aurore Lejard / Stephan Garnier</td>
+  <td class="score">5-1 3-5 5-0</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gurvan Jehanno / Evie Bouteloup</td>
+  <td class="score">2-5 5-2 5-2</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Aude Dabencourt / Joaquim Pinheiro</td>
+  <td class="score">4-5 4-5 5-4 5-4 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-858812793" open>
+  <summary>
+    <span class="player-name">Anja Linneberg</span>
+    <span class="player-record">2W – 5L · 8–12 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Troels Grosbøll-Poulsen)</h3>
+    <div class="comp-meta"><span class="rank">9th</span> <span class="comp-record">1W–4L · 5–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score">5-3 4-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Benjamin Rekut / Séverine Tran-Thanh</td>
+  <td class="score">5-3 4-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Charline Demlenne / Daniel Kelovic</td>
+  <td class="score">2-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tristan Lepetit / Chloé Gorichon</td>
+  <td class="score">5-2 0-5 2-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Stephanie Silva Loyola / Stefan Stamerra</td>
+  <td class="score">5-4 3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Alexandre Contrepois)</h3>
+    <div class="comp-meta"><span class="rank">86th</span> <span class="comp-record">1W–1L · 3–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Rudy Scaya / Clément Barbara</td>
+  <td class="score">5-3 4-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Karim Kisrane / Aymeric Le Nir</td>
+  <td class="score">4-5 5-4 5-7</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-754939466" open>
+  <summary>
+    <span class="player-name">Ditte Marie Larsen</span>
+    <span class="player-record">2W – 5L · 5–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Jakob Kampmann)</h3>
+    <div class="comp-meta"><span class="rank">14th</span> <span class="comp-record">2W–4L · 4–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tamara Abdel-Aziz / Tage Miller <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Nick Poroshyn / Alina Pipko</td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franck Mahy / Sandrine Feray</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Leo Gomes / Camille Lucot</td>
+  <td class="score">1-5 3-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Tonino Schmitz / Michelle Fuchs</td>
+  <td class="score">5-0 2-5 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Michael Kunath / Sabrina Sachau</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Nations Cup - Women (with Tamara Abdel-Aziz / Julie Hallas Dreijer / Lea Kvistgaard / Malene Veje / Amalie Wolff)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ekaterina Atanasova / Blagovesta Hoffmann / Svetlana Zhechkova / Yanitsa Zhecheva</td>
+  <td class="score">10-0 19-20 27-30</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1377060321" open>
+  <summary>
+    <span class="player-name">Kim Kragh</span>
+    <span class="player-record">2W – 5L · 4–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Morten Kiilerich)</h3>
+    <div class="comp-meta"><span class="rank">18th</span> <span class="comp-record">1W–4L · 1–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Dimitri Guillet / Richard Delrio</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Anthony Neau / Damien Ledoux</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Stéfan Francoïa / Jérémy Ansermoz</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexis Hyerle / Romain Tracol</td>
+  <td class="score">6-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jérémie Priol / Viet Anh Tran</td>
+  <td class="score">4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Fabien Angama)</h3>
+    <div class="comp-meta"><span class="rank">77th</span> <span class="comp-record">1W–1L · 3–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Marc Franchi / Mike Thome</td>
+  <td class="score">5-1 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Luc Brevet / Jules Vannier</td>
+  <td class="score">3-5 5-4 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-346282575" open>
+  <summary>
+    <span class="player-name">Kristian Schmidt</span>
+    <span class="player-record">2W – 4L · 3–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Rune Lillevang)</h3>
+    <div class="comp-meta"><span class="rank">101st</span> <span class="comp-record">2W–3L · 2–4 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Teddy Cotineau / Erick Hilder</td>
+  <td class="score">8-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pierre De Hollanda / Charles Dezani</td>
+  <td class="score">4-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gilbert Dacunha / Paul De Sousa Carvalho</td>
+  <td class="score">8-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franck Knopf / Patrice Courtade</td>
+  <td class="score">3-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Victor Villaverde / Vincent Rousset</td>
+  <td class="score">3-5 1-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Stéphane Bouge)</h3>
+    <div class="comp-meta"><span class="rank">179th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Robert Zamora / Margaux Engels</td>
+  <td class="score">2-5 5-4 5-7</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-759459450" open>
+  <summary>
+    <span class="player-name">Marco Frøkjær Wejse</span>
+    <span class="player-record">2W – 5L · 5–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Julie Hallas Dreijer)</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">1W–4L · 3–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pierre Jeambrun / Constance Rousseaux</td>
+  <td class="score">3-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Isabela Oancea / Romain Veneu</td>
+  <td class="score">2-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nick Poroshyn / Alina Pipko</td>
+  <td class="score">2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Stephanie Silva Loyola / Stefan Stamerra</td>
+  <td class="score">4-5 5-4 8-6</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Axel Charron)</h3>
+    <div class="comp-meta"><span class="rank">100th</span> <span class="comp-record">1W–1L · 2–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Jérôme Lacoste / Alessio Ianuario</td>
+  <td class="score">5-3 5-2</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tom Garrigues / Djino Renaud</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-886667185" open>
+  <summary>
+    <span class="player-name">Rene Petræus</span>
+    <span class="player-record">2W – 6L · 4–9 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Felix With Andreasen)</h3>
+    <div class="comp-meta"><span class="rank">49th</span> <span class="comp-record">0W–5L · 0–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Horst Meisters / Frank Kuhtreiber</td>
+  <td class="score">3-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">András Bence Tóvölgyi / Marcus Steffensen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mario Rissmann / Stephan Peter</td>
+  <td class="score">6-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pascal Communal / Laurent Dantas</td>
+  <td class="score">4-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Laurent Vollais / Mickael Bottollier</td>
+  <td class="score">0-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Fabrice Leste)</h3>
+    <div class="comp-meta"><span class="rank">62nd</span> <span class="comp-record">2W–1L · 4–3 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Simon Hemi / Kevin Moreau</td>
+  <td class="score">5-3 3-5 5-3</td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Sylvain Target / Amran Maloum</td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">Round 3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Thierry Cazenave / Alessandro Manzone</td>
+  <td class="score">0-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-512186028" open>
+  <summary>
+    <span class="player-name">Rune Lillevang</span>
+    <span class="player-record">2W – 4L · 3–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Kristian Schmidt)</h3>
+    <div class="comp-meta"><span class="rank">101st</span> <span class="comp-record">2W–3L · 2–4 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Teddy Cotineau / Erick Hilder</td>
+  <td class="score">8-2</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pierre De Hollanda / Charles Dezani</td>
+  <td class="score">4-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result win">W</td>
+  <td class="opponent">Gilbert Dacunha / Paul De Sousa Carvalho</td>
+  <td class="score">8-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Franck Knopf / Patrice Courtade</td>
+  <td class="score">3-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Victor Villaverde / Vincent Rousset</td>
+  <td class="score">3-5 1-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Bruno Pennacchia)</h3>
+    <div class="comp-meta"><span class="rank">156th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nicolas Constantin / Dimitri Guillet</td>
+  <td class="score">5-4 4-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-215205555" open>
+  <summary>
+    <span class="player-name">Tage Miller</span>
+    <span class="player-record">2W – 4L · 5–10 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Tamara Abdel-Aziz)</h3>
+    <div class="comp-meta"><span class="rank">46th</span> <span class="comp-record">2W–3L · 5–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Ditte Marie Larsen / Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Bastien Etheve / Alexandra Caillet</td>
+  <td class="score">0-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Gabriel Quint / Clara Lemoine</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sanna Wolters / Tom Droit</td>
+  <td class="score">2-5 2-5 5-1 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Jôao De Jesus)</h3>
+    <div class="comp-meta"><span class="rank">189th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Laurent Fargues / Mickael Bottollier</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1590357200" open>
+  <summary>
+    <span class="player-name">Tamara Abdel-Aziz</span>
+    <span class="player-record">2W – 4L · 6–10 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Tage Miller)</h3>
+    <div class="comp-meta"><span class="rank">46th</span> <span class="comp-record">2W–3L · 5–8 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Ditte Marie Larsen / Jakob Kampmann <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-3 5-4</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Bastien Etheve / Alexandra Caillet</td>
+  <td class="score">0-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Gabriel Quint / Clara Lemoine</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Mille Burgaard / Gustav Severinsen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-5 5-4 5-3</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sanna Wolters / Tom Droit</td>
+  <td class="score">2-5 2-5 5-1 4-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Nations Cup - Women (with Julie Hallas Dreijer / Lea Kvistgaard / Malene Veje / Amalie Wolff / Ditte Marie Larsen)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ekaterina Atanasova / Blagovesta Hoffmann / Svetlana Zhechkova / Yanitsa Zhecheva</td>
+  <td class="score">10-0 19-20 27-30</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-794323815" open>
+  <summary>
+    <span class="player-name">Christian Frank</span>
+    <span class="player-record">1W – 5L · 1–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Peter Fjordside Rasmussen)</h3>
+    <div class="comp-meta"><span class="rank">35th</span> <span class="comp-record">1W–4L · 1–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Julien Rosset / Christophe Bonichon</td>
+  <td class="score">3-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Gabriel Tusevski / Idir Tagzout</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emeric Jacquot / Valentin Grandys</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Djino Renaud / Maxime Vacquet</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jérémie Priol / Viet Anh Tran</td>
+  <td class="score">2-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Antoine Brossier)</h3>
+    <div class="comp-meta"><span class="rank">196th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-François Ambel / Julien Rosset</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1592823355" open>
+  <summary>
+    <span class="player-name">Julie Hallas Dreijer</span>
+    <span class="player-record">1W – 5L · 4–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Marco Frøkjær Wejse)</h3>
+    <div class="comp-meta"><span class="rank">12th</span> <span class="comp-record">1W–4L · 3–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pierre Jeambrun / Constance Rousseaux</td>
+  <td class="score">3-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Isabela Oancea / Romain Veneu</td>
+  <td class="score">2-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Nick Poroshyn / Alina Pipko</td>
+  <td class="score">2-5 4-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Stephanie Silva Loyola / Stefan Stamerra</td>
+  <td class="score">4-5 5-4 8-6</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pia-Louise Claussen / David Ahrenkiel <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">5-2 3-5 2-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Nations Cup - Women (with Tamara Abdel-Aziz / Lea Kvistgaard / Malene Veje / Amalie Wolff / Ditte Marie Larsen)</h3>
+    <div class="comp-meta"><span class="rank">5th</span> <span class="comp-record">0W–1L · 1–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Quarterfinal</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Ekaterina Atanasova / Blagovesta Hoffmann / Svetlana Zhechkova / Yanitsa Zhecheva</td>
+  <td class="score">10-0 19-20 27-30</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-183709252" open>
+  <summary>
+    <span class="player-name">Krisztián Bali</span>
+    <span class="player-record">1W – 5L · 1–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Miki Tejlbo)</h3>
+    <div class="comp-meta"><span class="rank">21st</span> <span class="comp-record">1W–4L · 1–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Axel Charron / Gwenael Grezet</td>
+  <td class="score">3-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Simon Hemi / Mael Guyomarch</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Olivier Baelen / François Valoi</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexis Ricordel / Marc Bury</td>
+  <td class="score">6-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Miguel Meira Teixeira / Nicolas Lucien</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Sébastien Toutain)</h3>
+    <div class="comp-meta"><span class="rank">242nd</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Cyril Jegu / Clara Lemoine</td>
+  <td class="score">3-5 1-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-328168865" open>
+  <summary>
+    <span class="player-name">Miki Tejlbo</span>
+    <span class="player-record">1W – 5L · 1–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Krisztián Bali)</h3>
+    <div class="comp-meta"><span class="rank">21st</span> <span class="comp-record">1W–4L · 1–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Axel Charron / Gwenael Grezet</td>
+  <td class="score">3-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result win">W</td>
+  <td class="opponent">Simon Hemi / Mael Guyomarch</td>
+  <td class="score">8-7</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Olivier Baelen / François Valoi</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Alexis Ricordel / Marc Bury</td>
+  <td class="score">6-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Miguel Meira Teixeira / Nicolas Lucien</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Emmanuel Lalande)</h3>
+    <div class="comp-meta"><span class="rank">220th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Sébastien Huron / Fodhil Lourci</td>
+  <td class="score">2-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-116535655" open>
+  <summary>
+    <span class="player-name">Peter Fjordside Rasmussen</span>
+    <span class="player-record">1W – 5L · 1–7 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Christian Frank)</h3>
+    <div class="comp-meta"><span class="rank">35th</span> <span class="comp-record">1W–4L · 1–5 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Julien Rosset / Christophe Bonichon</td>
+  <td class="score">3-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Gabriel Tusevski / Idir Tagzout</td>
+  <td class="score">5-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Emeric Jacquot / Valentin Grandys</td>
+  <td class="score">7-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result win">W</td>
+  <td class="opponent">Djino Renaud / Maxime Vacquet</td>
+  <td class="score">8-7</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jérémie Priol / Viet Anh Tran</td>
+  <td class="score">2-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Laurent Bateau)</h3>
+    <div class="comp-meta"><span class="rank">198th</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Jean-Baptiste Prystajko / Sofie Solsø Odgaard <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-1543982052" open>
+  <summary>
+    <span class="player-name">Troels Grosbøll-Poulsen</span>
+    <span class="player-record">1W – 5L · 5–11 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Mixed (with Anja Linneberg)</h3>
+    <div class="comp-meta"><span class="rank">9th</span> <span class="comp-record">1W–4L · 5–9 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result win">W</td>
+  <td class="opponent">Maguy Ohayon / Adrien Hatiez</td>
+  <td class="score">5-3 4-5 7-5</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Benjamin Rekut / Séverine Tran-Thanh</td>
+  <td class="score">5-3 4-5 0-5</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Charline Demlenne / Daniel Kelovic</td>
+  <td class="score">2-5 1-5</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Tristan Lepetit / Chloé Gorichon</td>
+  <td class="score">5-2 0-5 2-5</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result win">W</td>
+  <td class="opponent">BYE</td>
+  <td class="score">5-2 5-2 <span class="forfeit">FF</span></td>
+</tr>
+<tr>
+  <td class="round">Round 2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Stephanie Silva Loyola / Stefan Stamerra</td>
+  <td class="score">5-4 3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+<div class="competition">
+  <div class="comp-header">
+    <h3>Thursday DYP (with Jean-Christophe Pele)</h3>
+    <div class="comp-meta"><span class="rank">202nd</span> <span class="comp-record">0W–1L · 0–2 sets</span></div>
+  </div>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Main Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Richard Delrio / Benjamin Rekut</td>
+  <td class="score">3-5 3-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<details class="player-card" id="player-27627612" open>
+  <summary>
+    <span class="player-name">Felix With Andreasen</span>
+    <span class="player-record">0W – 5L · 0–6 sets</span>
+  </summary>
+  
+<div class="competition">
+  <div class="comp-header">
+    <h3>Open Classic (with Rene Petræus)</h3>
+    <div class="comp-meta"><span class="rank">49th</span> <span class="comp-record">0W–5L · 0–6 sets</span></div>
+  </div>
+  <table class="matches"><tr><td colspan="4">
+<details class="qual-fold">
+  <summary>Qualifications (4 matches)</summary>
+  <table class="matches"><tr class="phase-header"><td colspan="4">Qualifications</td></tr>
+<tr>
+  <td class="round">R1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Horst Meisters / Frank Kuhtreiber</td>
+  <td class="score">3-8</td>
+</tr>
+<tr>
+  <td class="round">R2</td>
+  <td class="result loss">L</td>
+  <td class="opponent">András Bence Tóvölgyi / Marcus Steffensen <span class="dk-flag">🇩🇰</span></td>
+  <td class="score">4-8</td>
+</tr>
+<tr>
+  <td class="round">R3</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Mario Rissmann / Stephan Peter</td>
+  <td class="score">6-8</td>
+</tr>
+<tr>
+  <td class="round">R4</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Pascal Communal / Laurent Dantas</td>
+  <td class="score">4-8</td>
+</tr>
+</table>
+</details>
+</td></tr>
+<tr class="phase-header"><td colspan="4">Secondary Round</td></tr>
+<tr>
+  <td class="round">Round 1</td>
+  <td class="result loss">L</td>
+  <td class="opponent">Laurent Vollais / Mickael Bottollier</td>
+  <td class="score">0-5 2-5</td>
+</tr>
+</table>
+</div>
+
+</details>
+
+
+<footer>
+  Data from <a href="https://app.tablesoccer.org/p/7L5JM6">app.tablesoccer.org</a>
+</footer>
+
+
+
+</body>
+</html>
