@@ -353,7 +353,7 @@ footer a { color: var(--accent); text-decoration: none; }
   <h1>🇩🇰 Danish Players</h1>
   <div class="meta">World Series Bonzini 2026 · 2026-06-04 — 2026-06-07</div>
   <div class="status">Playing</div>
-  <div class="generated">Report generated at 2026-06-06 12:50 CEST</div>
+  <div class="generated">Report generated at 2026-06-06 13:00 CEST</div>
 </header>
 
 <div class="summary">
@@ -419,22 +419,36 @@ footer a { color: var(--accent); text-decoration: none; }
 </div>
 
 
-<section class="stream-section" aria-live="polite">
+<section class="stream-section has-streaming" aria-live="polite">
   <div class="section-heading">
     <h2>📺 Danish players on stream tables</h2>
     <button type="button" class="notify-button" id="enable-stream-notifications">Enable notifications</button>
   </div>
   <div class="stream-links"><a href="https://www.youtube.com/watch?v=BxgB37Dfe6s" target="_blank" rel="noopener">Table 1</a><a href="https://www.youtube.com/watch?v=nu-p7v-HDjs" target="_blank" rel="noopener">Table 2</a><a href="https://www.youtube.com/watch?v=6mmlaD_IGVw" target="_blank" rel="noopener">Table 3</a><a href="https://www.youtube.com/watch?v=kfa3aGt0hek" target="_blank" rel="noopener">Table 4</a><a href="https://www.youtube.com/watch?v=U5JzVFUOg1I" target="_blank" rel="noopener">Table 5</a><a href="https://www.youtube.com/watch?v=_CsVaFOkYeE" target="_blank" rel="noopener">Table 6</a><a href="https://www.youtube.com/watch?v=KoyXVbgp0xM" target="_blank" rel="noopener">Table 7</a><a href="https://www.youtube.com/watch?v=kQ1G8c3U748" target="_blank" rel="noopener">Table 8</a></div>
-  <p class="stream-empty">No Danish players are currently live on tables 1–8.</p>
+  <div class="stream-row">
+  <div class="stream-table"><a href="https://www.youtube.com/watch?v=BxgB37Dfe6s" target="_blank" rel="noopener">Table 1</a></div>
+  <a class="stream-match stream-match-link" href="https://www.youtube.com/watch?v=BxgB37Dfe6s" target="_blank" rel="noopener">
+    <div class="stream-comp">Men Singles · Main Round</div>
+    <div><span class="stream-team">Yannick Correia</span> <span class="versus">vs</span> <span class="stream-team dk">Troels Trier</span> </div>
+  </a>
+</div>
+
 </section>
 
 
 
 <section class="stream-section" aria-live="polite">
   <div class="section-heading">
-    <h2>🏓 Danes currently playing</h2>
+    <h2>🏓 Danes currently playing (1)</h2>
   </div>
-  <p class="stream-empty">No Danish players are currently playing.</p>
+  <div class="stream-row">
+  <div class="stream-table">Table 1</div>
+  <div class="stream-match">
+    <div class="stream-comp">Men Singles · Main Round</div>
+    <div><span class="stream-team">Yannick Correia</span> <span class="versus">vs</span> <span class="stream-team dk">Troels Trier</span> </div>
+  </div>
+</div>
+
 </section>
 
 
@@ -462,7 +476,7 @@ footer a { color: var(--accent); text-decoration: none; }
 <div class="active-row"><a class="active-name" href="#player-721400133">Morten Mandrup Hansen</a><span class="active-pair"><span class="round-tag">Q 3-1</span><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-754939466">Ditte Marie Larsen</a><span class="active-pair"><span class="round-tag">Q 2-2</span><span class="active-comp waiting">⏳ Women Doubles</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-759459450">Marco Frøkjær Wejse</a><span class="active-pair"><span class="round-tag">Q 2-2</span><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
-<div class="active-row"><a class="active-name" href="#player-792381737">Troels Trier</a><span class="active-pair"><span class="round-tag">F</span><span class="active-comp waiting">⏳ Men Singles</span></span> <span class="active-pair"><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
+<div class="active-row"><a class="active-name" href="#player-792381737">Troels Trier</a><span class="active-pair"><span class="round-tag">F</span><span class="active-comp live">🔴 Men Singles vs Yannick Correia</span></span> <span class="active-pair"><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-794323815">Christian Frank</a><span class="active-pair"><span class="round-tag">Q 1-3</span><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-824105510">Niels Wonsyld</a><span class="active-pair"><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
 <div class="active-row"><a class="active-name" href="#player-854943416">Sebastian Johansson</a><span class="active-pair"><span class="round-tag">Q 2-2</span><span class="active-comp waiting">⏳ Open Doubles</span></span></div>
@@ -4641,7 +4655,7 @@ footer a { color: var(--accent); text-decoration: none; }
   Data from <a href="https://app.tablesoccer.org/p/7L5JM6">app.tablesoccer.org</a>
 </footer>
 
-<script id="streaming-matches-data" type="application/json">[]</script>
+<script id="streaming-matches-data" type="application/json">[{"id": 357323, "table": 1, "competition": "Men Singles", "phase": "Main Round", "home": "Yannick Correia", "away": "Troels Trier", "home_is_dk": false, "away_is_dk": true, "score": ""}]</script>
 <script>
 (function () {
   const STORAGE_KEY = 'coral-streaming-match-ids:7L5JM6';
